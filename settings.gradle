@@ -8,3 +8,7 @@ dependencyResolutionManagement {
 rootProject.name = "DizzyTrip"
 include ':app'
 include ':core-utils'
+include ':feature-countries'
+include ':core-res'
+include ':core-data'
+include ':feature-countries-sample-app'

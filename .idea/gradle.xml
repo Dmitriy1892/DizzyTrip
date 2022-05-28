@@ -11,7 +11,11 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core-data" />
+            <option value="$PROJECT_DIR$/core-res" />
             <option value="$PROJECT_DIR$/core-utils" />
+            <option value="$PROJECT_DIR$/feature-countries" />
+            <option value="$PROJECT_DIR$/feature-countries-sample-app" />
           </set>
         </option>
       </GradleProjectSettings>

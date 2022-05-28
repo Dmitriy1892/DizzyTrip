@@ -4,15 +4,15 @@ import androidx.navigation.NavController
 import com.coldfier.dizzytrip.di.subcomponent.modules.ViewModelModule
 import com.coldfier.dizzytrip.ui.MainActivity
 import dagger.BindsInstance
-import dagger.Component
+import dagger.Subcomponent
 
 @MainActivityScope
-@Component(modules = [ViewModelModule::class])
+@Subcomponent(modules = [ViewModelModule::class])
 internal interface MainActivitySubcomponent {
 
     fun inject(mainActivity: MainActivity)
 
-    @Component.Builder
+    @Subcomponent.Builder
     interface Builder {
 
         @BindsInstance

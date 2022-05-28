@@ -43,4 +43,9 @@ class MainActivity : AppCompatActivity() {
 
         activityComponent.inject(this)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }
