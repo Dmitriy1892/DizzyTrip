@@ -3,6 +3,7 @@ package com.coldfier.core_data
 import com.coldfier.core_data.di.CoreDataComponent
 import com.coldfier.core_data.di.DaggerCoreDataComponent
 import com.coldfier.core_data.domain.repositories.CountriesRepository
+import com.coldfier.core_data.domain.repositories.PixabayImagesRepository
 import javax.inject.Inject
 
 class CoreDataApi private constructor(coreDataDeps: CoreDataDeps) {
@@ -14,6 +15,9 @@ class CoreDataApi private constructor(coreDataDeps: CoreDataDeps) {
 
     @Inject
     lateinit var countriesRepository: CountriesRepository
+
+    @Inject
+    lateinit var pixabayImagesRepository: PixabayImagesRepository
 
     companion object {
         @Volatile

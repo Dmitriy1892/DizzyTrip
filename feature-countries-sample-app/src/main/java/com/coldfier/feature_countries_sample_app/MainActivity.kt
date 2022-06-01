@@ -1,6 +1,8 @@
 package com.coldfier.feature_countries_sample_app
 
 import android.os.Bundle
+import android.os.Debug
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
 import com.coldfier.core_utils.di.DepsMap
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity(), HasDependencies {
         supportFragmentManager.beginTransaction()
             .add(R.id.container, CountriesListFragment(), "TAG")
             .commit()
+
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
     }
 }

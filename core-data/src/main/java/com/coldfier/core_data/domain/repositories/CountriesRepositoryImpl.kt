@@ -10,10 +10,7 @@ import com.coldfier.core_data.domain.convertToRoomCountryShort
 import com.coldfier.core_data.domain.models.Country
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -23,18 +20,16 @@ internal class CountriesRepositoryImpl @Inject constructor(
 ): CountriesRepository {
 
     override val countryShortsFlow = flow {
+        val countries = countriesNetDataSource.getAllCountries()
+            .map { it.convertToRoomCountryShort() }
+        countriesRoomDataSource.saveRoomCountryShorts(countries)
+
         val dbFlow = countriesRoomDataSource.countryShortsFlow.map { roomCountryShorts ->
             roomCountryShorts.map { it.convertToCountryShort() }
         }
 
         emitAll(dbFlow)
 
-        coroutineScope {
-            val countries = countriesNetDataSource.getAllCountries()
-                .map { it.convertToRoomCountryShort() }
-
-            countriesRoomDataSource.saveRoomCountryShorts(countries)
-        }
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getCountryByUri(uri: Uri): Country {

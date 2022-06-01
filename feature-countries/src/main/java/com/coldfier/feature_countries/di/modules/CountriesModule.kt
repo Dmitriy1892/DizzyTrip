@@ -4,6 +4,7 @@ import android.content.Context
 import com.coldfier.core_data.CoreDataApi
 import com.coldfier.core_data.CoreDataDeps
 import com.coldfier.core_data.domain.repositories.CountriesRepository
+import com.coldfier.core_data.domain.repositories.PixabayImagesRepository
 import com.coldfier.feature_countries.di.CountriesScope
 import dagger.Module
 import dagger.Provides
@@ -21,4 +22,9 @@ internal class CountriesModule {
     @Provides
     fun provideCountriesRepository(coreDataDeps: CoreDataDeps): CountriesRepository =
         CoreDataApi.getInstance(coreDataDeps).countriesRepository
+
+    @CountriesScope
+    @Provides
+    fun providePixabayImagesRepository(coreDataDeps: CoreDataDeps): PixabayImagesRepository =
+        CoreDataApi.getInstance(coreDataDeps).pixabayImagesRepository
 }
