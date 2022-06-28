@@ -8,7 +8,7 @@ internal class PixabayImagesRepositoryImpl @Inject constructor(
     private val pixabayImagesDataSource: PixabayImagesDataSource
 ) : PixabayImagesRepository {
 
-    override suspend fun searchImagesByCountryName(countryName: String): Uri? {
+    override suspend fun searchImageByCountryName(countryName: String): Uri? {
         val urlString = try {
             pixabayImagesDataSource.searchImagesByCountryName(countryName)
                 .hits
@@ -19,5 +19,22 @@ internal class PixabayImagesRepositoryImpl @Inject constructor(
         }
 
         return try { Uri.parse(urlString) } catch (e: Exception) { null }
+    }
+
+    override suspend fun searchImagesByCountryName(countryName: String): List<Uri> {
+        val urlStringList = try {
+            pixabayImagesDataSource.searchImagesByCountryName(countryName)
+                .hits
+                ?.map { it.webformatURL ?: "" }
+                ?.take(5) ?: listOf()
+        } catch (e: Exception) {
+            listOf()
+        }
+
+        return try {
+            urlStringList.map { Uri.parse(it) }
+        } catch (e: Exception) {
+            listOf()
+        }
     }
 }

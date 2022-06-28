@@ -18,7 +18,7 @@ internal class CountriesListUseCase @Inject constructor(
     suspend fun searchCountry(countryName: String): Country =
         countriesRepository.searchCountry(countryName)
 
-    suspend fun searchImagesByCountryName(countryName: String): Uri? {
-        return pixabayImagesRepository.searchImagesByCountryName(countryName)
+    suspend fun searchImageByCountryName(countryName: String): Uri? {
+        return pixabayImagesRepository.searchImageByCountryName(countryName)
     }
 }

@@ -4,7 +4,10 @@ import android.Manifest
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_utils.ui.launchInIOCoroutine
+import com.coldfier.feature_countries.use_cases.CountryDetailUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -12,23 +15,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class CountryDetailViewModel constructor(country: Country) : ViewModel() {
+class CountryDetailViewModel constructor(
+    country: Country,
+    private val countryDetailUseCase: CountryDetailUseCase
+) : ViewModel() {
 
     class CountryDetailViewModelFactory @AssistedInject constructor(
-        @Assisted("country") private val country: Country
+        @Assisted("country") private val country: Country,
+        private val countryDetailUseCase: CountryDetailUseCase
     ): ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return CountryDetailViewModel(country) as T
+            return CountryDetailViewModel(country, countryDetailUseCase) as T
         }
 
         @AssistedFactory
-        interface CountryDetailViewModelAssistedFactory {
+        interface VMAssistedFactory {
             fun create(@Assisted("country") country: Country): CountryDetailViewModelFactory
         }
     }
 
-    private val _screenStateFlow = MutableStateFlow(CountryDetailScreenState(country, listOf()))
+    init {
+        launchInIOCoroutine {
+            val imageUriList =
+                countryDetailUseCase.searchImagesByCountryName(country.name ?: "")
+            _screenStateFlow.value = _screenStateFlow.value.copy(imageUriList = imageUriList)
+        }
+    }
+
+    private val _screenStateFlow = MutableStateFlow(CountryDetailScreenState(country))
     val screenStateFlow: StateFlow<CountryDetailScreenState>
         get() = _screenStateFlow.asStateFlow()
 
@@ -52,7 +67,7 @@ class CountryDetailViewModel constructor(country: Country) : ViewModel() {
 
 data class CountryDetailScreenState(
     val country: Country,
-    val imageUriList: List<Uri>,
+    val imageUriList: List<Uri> = listOf(Uri.EMPTY),
     val deniedPermissions: Set<String> = setOf(
         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE,

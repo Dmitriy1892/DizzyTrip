@@ -17,6 +17,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             app:toolbarId="@+id/toolbar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:layout_scrollInterpolator="@android:anim/decelerate_interpolator"
@@ -34,13 +35,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:layout_gravity="center_horizontal|bottom"/>
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@null"
+                app:tabBackground="@drawable/selector_tab_indicator"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"/>
 
             <ImageButton
                 android:id="@+id/button_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="38dp"
+                android:layout_marginTop="68dp"
                 android:layout_marginStart="30dp"
                 android:src="@drawable/ic_arrow_back"
                 android:background="@drawable/bg_square_fab" />
@@ -50,7 +55,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="top|end"
-                android:layout_marginTop="38dp"
+                android:layout_marginTop="68dp"
                 android:layout_marginEnd="30dp"
                 android:src="@drawable/ic_bookmark_off"
                 android:background="@drawable/bg_square_fab" />

@@ -129,7 +129,7 @@ internal class CountriesListViewModel @Inject constructor(
     }
 
     suspend fun loadImageForCountry(countryName: String): Uri? {
-        return countriesListUseCase.searchImagesByCountryName(countryName)
+        return countriesListUseCase.searchImageByCountryName(countryName)
     }
 }
 

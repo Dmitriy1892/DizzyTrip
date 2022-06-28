@@ -35,7 +35,7 @@ class CountryDetailFragment : Fragment() {
 
     @Inject
     internal lateinit var viewModelFactory:
-            CountryDetailViewModel.CountryDetailViewModelFactory.CountryDetailViewModelAssistedFactory
+            CountryDetailViewModel.CountryDetailViewModelFactory.VMAssistedFactory
 
     private val viewModel: CountryDetailViewModel by viewModels {
         viewModelFactory.create(countryArgs.country)
@@ -85,8 +85,7 @@ class CountryDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.vpImageHolder.adapter = CountryPhotoAdapter()
-        TabLayoutMediator(binding.tabLayout, binding.vpImageHolder) { _, _ ->
-        }.attach()
+        TabLayoutMediator(binding.tabLayout, binding.vpImageHolder) { _, _ -> }.attach()
 
         binding.rvLanguages.adapter = CountryLanguagesAdapter()
 
