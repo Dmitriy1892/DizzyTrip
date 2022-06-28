@@ -63,7 +63,7 @@ internal fun NetCountryExpanded.convertToRoomCountryFullModel() = RoomCountryFul
         RoomAdvice(
             countryName = countryNames?.name,
             adviceType = adviceType,
-            advise = netAdvice.advise,
+            advise = netAdvice.advise?.substringAfter("-->")?.substringBefore("<!--"),
             url = netAdvice.url
         )
     },

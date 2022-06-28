@@ -1,16 +1,20 @@
 package com.coldfier.feature_countries.ui.country_detail
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.preference.PreferenceManager
 import com.coldfier.core_data.repository.models.Advice
 import com.coldfier.core_data.repository.models.AdviceType
 import com.coldfier.core_utils.di.findDependencies
@@ -19,11 +23,13 @@ import com.coldfier.feature_countries.R
 import com.coldfier.feature_countries.databinding.FragmentCountryDetailBinding
 import com.coldfier.feature_countries.di.CountriesComponent
 import com.coldfier.feature_countries.di.DaggerCountriesComponent
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
 import javax.inject.Inject
-import kotlin.text.StringBuilder
 
 class CountryDetailFragment : Fragment() {
 
@@ -40,6 +46,18 @@ class CountryDetailFragment : Fragment() {
     private var _binding: FragmentCountryDetailBinding? = null
     private val binding: FragmentCountryDetailBinding
         get() = _binding!!
+
+    private val mapPermissionsCallback = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        val deniedPermissions = result.filterValues { isGranted -> !isGranted }.keys
+        val action = if (deniedPermissions.isEmpty()) {
+            CountryDetailScreenAction.GrantedPermissions
+        } else {
+            CountryDetailScreenAction.DeniedPermissions(deniedPermissions)
+        }
+        viewModel.sendAction(action)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -67,7 +85,7 @@ class CountryDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.vpImageHolder.adapter = CountryPhotoAdapter()
-        TabLayoutMediator(binding.tabLayout, binding.vpImageHolder) { tab, position ->
+        TabLayoutMediator(binding.tabLayout, binding.vpImageHolder) { _, _ ->
         }.attach()
 
         binding.rvLanguages.adapter = CountryLanguagesAdapter()
@@ -96,12 +114,22 @@ class CountryDetailFragment : Fragment() {
             tvCountryName.text = country.fullName ?: ""
             tvMapLink.text = "${country.name}, ${country.continent}, ${country.iso2}"
 
-            mapView.getMapAsync { googleMap ->
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    LatLng(country.lat ?: 0.0, country.lon ?: 0.0),
-                    country.zoom?.toFloat() ?: 18.0F
-                ))
+            if (screenState.deniedPermissions.isEmpty()) {
+                with(screenState.country) {
+                    initMap(lat ?: 0.0, lon ?: 0.0, zoom ?: 0.0)
+                }
+            } else {
+                val deniedPermissions = checkMultiplePermissions(screenState.deniedPermissions)
+
+                if (deniedPermissions.isEmpty()) {
+                    with(screenState.country) {
+                        initMap(lat ?: 0.0, lon ?: 0.0, zoom ?: 0.0)
+                    }
+                } else {
+                    showErrorPermissionsSnackbar(deniedPermissions)
+                }
             }
+
 
             (rvLanguages.adapter as CountryLanguagesAdapter).submitList(country.languages)
 
@@ -157,6 +185,57 @@ class CountryDetailFragment : Fragment() {
             tvFire.text = String
                 .format(getString(R.string.fire), country.fireNumber?.toString() ?: "")
         }
+    }
+
+    private fun showErrorPermissionsSnackbar(deniedPermissions: Set<String>) {
+        val snackbar = Snackbar.make(
+            binding.root, R.string.permission_error_message, Snackbar.LENGTH_INDEFINITE
+        )
+
+        snackbar.setAction(R.string.snackbar_repeat_button) {
+            requestPermissions(deniedPermissions)
+            snackbar.dismiss()
+        }
+
+        snackbar.show()
+    }
+
+    private fun initMap(lat: Double, lon: Double, zoom: Double) {
+
+        Configuration.getInstance().load(
+            requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext())
+        )
+
+        binding.mapView.setTileSource(TileSourceFactory.WIKIMEDIA)
+        val mapController = binding.mapView.controller
+        mapController.setZoom(zoom)
+        val point = GeoPoint(lat, lon)
+        mapController.setCenter(point)
+
+        val marker = Marker(binding.mapView).apply {
+            position = point
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_marker_filled)
+        }
+
+        binding.mapView.overlays.add(marker)
+    }
+
+    /**
+     * @return set of denied permissions
+     * If all permissions granted,
+     * @return empty set
+     */
+    private fun checkMultiplePermissions(permissions: Set<String>): Set<String> {
+        return permissions.filterTo(HashSet()) { !checkPermission(it) }
+    }
+
+    private fun checkPermission(permission: String): Boolean =
+        ContextCompat.checkSelfPermission(requireContext(), permission) ==
+                PackageManager.PERMISSION_GRANTED
+
+    private fun requestPermissions(permissions: Set<String>) {
+        mapPermissionsCallback.launch(permissions.toTypedArray())
     }
 
     override fun onDestroyView() {

@@ -21,4 +21,6 @@
     <string name="fire">Fire: <b>%1$s</b></string>
     <string name="water">Water</string>
     <string name="no_water_info">No info about water</string>
+    <string name="permission_error_message">Please approve all permissions</string>
+    <string name="snackbar_repeat_button">Repeat</string>
 </resources>
