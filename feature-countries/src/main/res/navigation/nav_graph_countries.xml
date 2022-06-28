@@ -9,5 +9,18 @@
         android:id="@+id/countriesListFragment"
         android:name="com.coldfier.feature_countries.ui.countries_list.CountriesListFragment"
         android:label="fragment_countries_list"
-        tools:layout="@layout/fragment_countries_list" />
+        tools:layout="@layout/fragment_countries_list" >
+        <action
+            android:id="@+id/action_countriesListFragment_to_countryDetailFragment"
+            app:destination="@id/countryDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/countryDetailFragment"
+        android:name="com.coldfier.feature_countries.ui.country_detail.CountryDetailFragment"
+        android:label="CountryDetailFragment"
+        tools:layout="@layout/fragment_country_detail">
+        <argument
+            android:name="country"
+            app:argType="com.coldfier.core_data.repository.models.Country" />
+    </fragment>
 </navigation>

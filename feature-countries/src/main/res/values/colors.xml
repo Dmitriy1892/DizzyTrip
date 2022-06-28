@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="separator_color">#757575</color>
+    <color name="month_text_color">#4C4C4C</color>
+    <color name="point_color">#203291</color>
+    <color name="line_paint">#3144AF</color>
+</resources>

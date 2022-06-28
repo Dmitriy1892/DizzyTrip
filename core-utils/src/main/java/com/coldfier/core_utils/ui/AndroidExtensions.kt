@@ -17,10 +17,10 @@ inline fun ViewModel.launchInIOCoroutine(crossinline block: suspend () -> Unit) 
 }
 
 context (Fragment)
-fun <T> Flow<T>.observeInCoroutine(block: suspend (T) -> Unit) {
+fun <T> Flow<T>.observeWithLifecycle(block: suspend (T) -> Unit) {
     viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            this@observeInCoroutine.collect {
+            this@observeWithLifecycle.collect {
                 block(it)
             }
         }
@@ -28,10 +28,10 @@ fun <T> Flow<T>.observeInCoroutine(block: suspend (T) -> Unit) {
 }
 
 context (AppCompatActivity)
-fun <T> Flow<T>.observeInCoroutine(block: suspend (T) -> Unit) {
+fun <T> Flow<T>.observeWithLifecycle(block: suspend (T) -> Unit) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            this@observeInCoroutine.collect {
+            this@observeWithLifecycle.collect {
                 block(it)
             }
         }

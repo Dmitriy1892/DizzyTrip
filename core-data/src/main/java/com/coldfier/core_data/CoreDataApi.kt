@@ -2,8 +2,8 @@ package com.coldfier.core_data
 
 import com.coldfier.core_data.di.CoreDataComponent
 import com.coldfier.core_data.di.DaggerCoreDataComponent
-import com.coldfier.core_data.domain.repositories.CountriesRepository
-import com.coldfier.core_data.domain.repositories.PixabayImagesRepository
+import com.coldfier.core_data.repository.repositories.CountriesRepository
+import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
 import javax.inject.Inject
 
 class CoreDataApi private constructor(coreDataDeps: CoreDataDeps) {

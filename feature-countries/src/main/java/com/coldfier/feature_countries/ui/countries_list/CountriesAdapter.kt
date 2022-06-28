@@ -9,13 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
-import coil.decode.Decoder
-import coil.fetch.SourceResult
-import coil.map.Mapper
-import coil.request.ImageRequest
-import coil.request.Options
-import com.coldfier.core_data.domain.models.CountryShort
+import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.feature_countries.R
 import com.coldfier.feature_countries.databinding.RvItemCountryBinding
 

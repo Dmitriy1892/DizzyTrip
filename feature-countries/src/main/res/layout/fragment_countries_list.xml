@@ -15,14 +15,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:fontFamily="@font/sofia_pro_regular"
-        android:letterSpacing="0.0"
         android:text="@string/where_do_you_want_to_go"
-        android:textColor="@color/title_text_color"
-        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/cv_user_avatar_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cv_user_avatar_container" />
+        app:layout_constraintTop_toTopOf="@+id/cv_user_avatar_container"
+        style="@style/titleText"
+        android:textSize="22sp"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_user_avatar_container"
@@ -77,10 +75,8 @@
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:background="@color/white"
-        android:fontFamily="@font/sofia_pro_regular"
         android:text="@string/no_search_result_text"
         android:textSize="18sp"
-        android:letterSpacing="0.0"
         android:elevation="5dp"
         android:visibility="invisible"
         android:lines="1"
@@ -90,7 +86,8 @@
         app:layout_constraintStart_toStartOf="@+id/et_search"
         app:layout_constraintTop_toBottomOf="@+id/et_search"
         tools:text="no result no result no result no result no result no result no result no result no result "
-        tools:visibility="visible"/>
+        tools:visibility="visible"
+        style="@style/regularText" />
 
     <ProgressBar
         android:id="@+id/pb_search"
@@ -106,15 +103,12 @@
 
     <TextView
         android:id="@+id/tv_title"
+        style="@style/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginStart="30dp"
-        android:fontFamily="@font/sofia_pro_regular"
         android:text="@string/title_explore_countries"
-        android:textColor="@color/title_text_color"
-        android:textSize="20sp"
-        android:letterSpacing="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_search" />
 
@@ -143,14 +137,11 @@
 
         <TextView
             android:id="@+id/tv_no_data"
+            style="@style/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/sofia_pro_regular"
-            android:text="@string/data_not_loaded_text"
-            android:textColor="@color/title_text_color"
-            android:textSize="20sp"
-            android:letterSpacing="0.0" />
+            android:text="@string/data_not_loaded_text" />
     </FrameLayout>
 
 

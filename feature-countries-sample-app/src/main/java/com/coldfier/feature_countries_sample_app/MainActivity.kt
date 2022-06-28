@@ -17,15 +17,5 @@ class MainActivity : AppCompatActivity(), HasDependencies {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val container = findViewById<FragmentContainerView>(R.id.container)
-
-        supportFragmentManager.beginTransaction()
-            .add(R.id.container, CountriesListFragment(), "TAG")
-            .commit()
-
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
     }
 }

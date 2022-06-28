@@ -2,8 +2,8 @@ package com.coldfier.core_data.di.modules
 
 import android.content.Context
 import androidx.room.Room
-import com.coldfier.core_data.data.room.CountryDatabase
-import com.coldfier.core_data.data.room.dao.CountriesDao
+import com.coldfier.core_data.data_store.room.CountryDatabase
+import com.coldfier.core_data.data_store.room.dao.CountriesDao
 import com.coldfier.core_data.di.CoreDataScope
 import dagger.Module
 import dagger.Provides

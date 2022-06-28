@@ -1,10 +1,11 @@
 package com.coldfier.core_data.di.modules
 
 import com.coldfier.core_data.BuildConfig
-import com.coldfier.core_utils.moshi_adapters.UriAdapter
-import com.coldfier.core_data.data.net.api.CountriesApi
-import com.coldfier.core_data.data.net.api.PixabayImagesApi
+import com.coldfier.core_data.data_store.net.AdviceAdapter
+import com.coldfier.core_data.data_store.net.api.CountriesApi
+import com.coldfier.core_data.data_store.net.api.PixabayImagesApi
 import com.coldfier.core_data.di.CoreDataScope
+import com.coldfier.core_utils.moshi_adapters.UriAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -13,7 +14,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.create
 
 @Module
 internal class NetworkModule {
@@ -24,6 +24,7 @@ internal class NetworkModule {
                 Moshi.Builder()
                     .add(KotlinJsonAdapterFactory())
                     .add(UriAdapter())
+                    .add(AdviceAdapter())
                     .build()
             )
         )

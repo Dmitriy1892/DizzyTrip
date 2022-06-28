@@ -14,14 +14,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import coil.ImageLoader
-import coil.load
 import coil.request.ImageRequest
-import com.coldfier.core_data.domain.models.CountryShort
+import com.coldfier.core_data.repository.models.CountryShort
+import com.coldfier.core_utils.di.DepsMap
+import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.core_utils.di.ViewModelFactory
 import com.coldfier.core_utils.di.findDependencies
-import com.coldfier.core_utils.ui.observeInCoroutine
+import com.coldfier.core_utils.ui.observeWithLifecycle
 import com.coldfier.core_utils.ui.setAfterTextChangedListenerWithDebounce
+import com.coldfier.feature_countries.CountriesDeps
 import com.coldfier.feature_countries.R
 import com.coldfier.feature_countries.databinding.FragmentCountriesListBinding
 import com.coldfier.feature_countries.di.CountriesComponent
@@ -32,7 +35,9 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-class CountriesListFragment : Fragment() {
+class CountriesListFragment : Fragment(), HasDependencies {
+
+    override val depsMap: DepsMap = mapOf(CountriesDeps::class.java to object : CountriesDeps {})
 
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
@@ -143,11 +148,13 @@ class CountriesListFragment : Fragment() {
             }
         }
 
-        viewModel.navigateFlow.observeInCoroutine {
-            // TODO
+        viewModel.navigateFlow.observeWithLifecycle {
+            val action = CountriesListFragmentDirections
+                .actionCountriesListFragmentToCountryDetailFragment(it)
+            findNavController().navigate(action)
         }
 
-        viewModel.countriesScreenStateFlow.observeInCoroutine { screenState ->
+        viewModel.countriesScreenStateFlow.observeWithLifecycle { screenState ->
             when (screenState) {
                 is CountriesScreenState.Loading -> {
                     showLoadingState()

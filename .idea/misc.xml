@@ -5,18 +5,27 @@
       <map>
         <entry key="..\:/MyProjects/DizzyTrip/app/src/main/res/layout/activity_main.xml" value="0.18072916666666666" />
         <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/ic_user_avatar_placeholder.xml" value="0.189" />
-        <entry key="..\:/MyProjects/DizzyTrip/feature-countries-sample-app/src/main/res/layout/activity_main.xml" value="0.18072916666666666" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries-sample-app/src/main/res/layout/activity_main.xml" value="0.16666666666666666" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/bg_layout_rounded_top.xml" value="0.3195" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/bg_search_field.xml" value="0.2585" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/bg_square_fab.xml" value="0.3195" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/gradient_1.xml" value="0.261" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/gradient_2.xml" value="0.261" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/gradient_3.xml" value="0.188" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/gradient_list.xml" value="0.261" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_bg_country_photo_placeholder.xml" value="0.2585" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_bookmark.xml" value="0.2585" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_bookmark_off.xml" value="0.2505" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_bookmark_on.xml" value="0.2585" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_dot_list.xml" value="0.3195" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_location_marker.xml" value="0.2585" />
-        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_countries_list.xml" value="0.22" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_countries_list.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_country_detail.xml" value="0.22" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_item_country.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_item_language.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_item_vaccination.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/vp_country_image.xml" value="0.3546875" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/vp_country_photo.xml" value="0.22" />
       </map>
     </option>
   </component>

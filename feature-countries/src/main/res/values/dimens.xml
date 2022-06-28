@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="stroke_width">1dp</dimen>
+    <dimen name="line_width">2dp</dimen>
+    <dimen name="point_width">8dp</dimen>
+    <dimen name="month_text_size">14sp</dimen>
+    <dimen name="temperature_text_size">10sp</dimen>
+    <dimen name="month_divider_width">30dp</dimen>
+    <dimen name="temperature_degree_height">20dp</dimen>
+    <dimen name="top_padding">10dp</dimen>
+    <dimen name="min_row_height">20dp</dimen>
+</resources>

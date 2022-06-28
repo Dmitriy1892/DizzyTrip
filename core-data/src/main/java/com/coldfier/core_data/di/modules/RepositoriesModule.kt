@@ -1,10 +1,10 @@
 package com.coldfier.core_data.di.modules
 
 import com.coldfier.core_data.di.CoreDataScope
-import com.coldfier.core_data.domain.repositories.CountriesRepository
-import com.coldfier.core_data.domain.repositories.CountriesRepositoryImpl
-import com.coldfier.core_data.domain.repositories.PixabayImagesRepository
-import com.coldfier.core_data.domain.repositories.PixabayImagesRepositoryImpl
+import com.coldfier.core_data.repository.repositories.CountriesRepository
+import com.coldfier.core_data.repository.repositories.CountriesRepositoryImpl
+import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
+import com.coldfier.core_data.repository.repositories.PixabayImagesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 

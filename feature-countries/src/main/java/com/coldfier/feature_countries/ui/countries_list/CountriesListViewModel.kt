@@ -1,11 +1,10 @@
 package com.coldfier.feature_countries.ui.countries_list
 
 import android.net.Uri
-import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldfier.core_data.domain.models.Country
-import com.coldfier.core_data.domain.models.CountryShort
+import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.core_utils.ui.launchInIOCoroutine
 import com.coldfier.feature_countries.use_cases.CountriesListUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,8 +36,8 @@ internal class CountriesListViewModel @Inject constructor(
         awaitClose { callback = null }
     }.stateIn(viewModelScope, SharingStarted.Lazily, CountriesScreenState.Loading)
 
-    private val navigateChannel = Channel<Boolean>()
-    val navigateFlow: Flow<Boolean>
+    private val navigateChannel = Channel<Country>()
+    val navigateFlow: Flow<Country>
         get() = navigateChannel.receiveAsFlow()
 
     fun sendEvent(countriesScreenEvent: CountriesScreenEvent) {
@@ -47,8 +46,7 @@ internal class CountriesListViewModel @Inject constructor(
                 is CountriesScreenEvent.OpenCountryFullInfo -> {
                     countriesScreenEvent.countryShort.uri?.let {
                         try {
-                            countriesListUseCase.getCountryByUri(it)
-                            navigateChannel.send(true)
+                            navigateChannel.send(countriesListUseCase.getCountryByUri(it))
                         } catch (e: Exception) {
                             val searchResult = when (val state = countriesScreenStateFlow.value) {
                                 is CountriesScreenState.Loading -> null

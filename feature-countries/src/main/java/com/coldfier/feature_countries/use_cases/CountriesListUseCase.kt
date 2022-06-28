@@ -1,9 +1,9 @@
 package com.coldfier.feature_countries.use_cases
 
 import android.net.Uri
-import com.coldfier.core_data.domain.models.Country
-import com.coldfier.core_data.domain.repositories.CountriesRepository
-import com.coldfier.core_data.domain.repositories.PixabayImagesRepository
+import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_data.repository.repositories.CountriesRepository
+import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
 import javax.inject.Inject
 
 internal class CountriesListUseCase @Inject constructor(
