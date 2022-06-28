@@ -8,5 +8,6 @@
     <dimen name="month_divider_width">30dp</dimen>
     <dimen name="temperature_degree_height">20dp</dimen>
     <dimen name="top_padding">10dp</dimen>
+    <dimen name="left_padding">5dp</dimen>
     <dimen name="min_row_height">20dp</dimen>
 </resources>

@@ -19,7 +19,7 @@ class WeatherGraphView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val separatorsPaint = Paint().apply {
+    private val separatorPaint = Paint().apply {
         strokeWidth = resources.getDimension(R.dimen.stroke_width)
         color = ContextCompat.getColor(context, R.color.separator_color)
     }
@@ -41,42 +41,51 @@ class WeatherGraphView @JvmOverloads constructor(
         strokeCap = Paint.Cap.ROUND
     }
 
-    private val linePaint = Paint().apply {
+    private val graphLinePaint = Paint().apply {
         strokeWidth = resources.getDimension(R.dimen.line_width)
         color = ContextCompat.getColor(context, R.color.line_paint)
     }
 
-    private val monthDividerWidth = resources.getDimension(R.dimen.month_divider_width)
-
-    private val rowHeight = resources.getDimension(R.dimen.temperature_degree_height).roundToInt()
-
-    private val contentWidth: Int
-        get() = monthDividerWidth.roundToInt() * 12
+    private val minRowHeight = resources.getDimension(R.dimen.min_row_height)
 
     private val rowRect = Rect()
 
     private var weatherMap = mapOf<Month, Double?>()
 
+    private val gridXYValue = 12
+
+    private val topPadding = resources.getDimension(R.dimen.top_padding)
+
+    private val leftPadding = resources.getDimension(R.dimen.left_padding)
+
+    private val monthNameHeight =
+        monthTextPaint.measureText(Month.values()[0].name.take(3)) * sqrt(2.0).toFloat() / 2
+
+    private val columnWidth
+        get() = (width  - leftPadding.toInt() - monthNameHeight) / gridXYValue
+
+    private val temperatureValuesCount
+        get() = weatherMap.values.mapTo(HashSet()) { it?.toInt() }.size
+
+    private val rowHeight
+        get() = if (temperatureValuesCount > 0) {
+            (height - topPadding - monthNameHeight) / temperatureValuesCount
+        } else { height - topPadding - monthNameHeight }
+
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
         val width = if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED) {
-            contentWidth
+            (leftPadding + columnWidth * gridXYValue
+                    + temperatureTextPaint.measureText("77 \u2103")).roundToInt()
         } else {
             MeasureSpec.getSize(widthMeasureSpec)
         }
 
-        val topPadding = resources.getDimension(R.dimen.top_padding)
-        val monthNameLength = monthTextPaint.measureText(Month.values()[0].name.take(3))
-        val monthNameHeight = monthNameLength * sqrt(2.0).toFloat() / 2
-        val temperatureValuesCount = weatherMap.values.mapTo(HashSet()) { it?.toInt() }.size
-
-        val minRowHeight = resources.getDimension(R.dimen.min_row_height)
-
         val minHeight = topPadding + monthNameHeight + minRowHeight * temperatureValuesCount
 
         val height = if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED) {
-            val gridHeight = temperatureValuesCount * minRowHeight
-            (gridHeight + topPadding + monthNameHeight).roundToInt()
+            minHeight.roundToInt()
         } else {
             val specifiedHeight = MeasureSpec.getSize(heightMeasureSpec)
             if (specifiedHeight < minHeight) {
@@ -93,74 +102,51 @@ class WeatherGraphView @JvmOverloads constructor(
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        rowRect.set(0,0, w, rowHeight)
+        rowRect.set(0,0, w, minRowHeight.roundToInt())
     }
 
     override fun onDraw(canvas: Canvas?) {
         canvas?.apply {
             drawGrid()
-            drawDiagram()
+            drawGraph()
         }
     }
 
     private fun Canvas.drawGrid() {
-        val gridXYValue = 12
-        val topPadding = resources.getDimension(R.dimen.top_padding)
-        val columnWidth = width / gridXYValue - 2
-        val columnWidthHalf = columnWidth / 2
-        val rowSeparatorXStart = columnWidth.toFloat()
-        val rowSeparatorXStop = rowSeparatorXStart * gridXYValue
-        val monthNameLength = monthTextPaint.measureText(Month.values()[0].name.take(3))
-        val monthNameHeight = monthNameLength * sqrt(2.0).toFloat() / 2
-        val rowHeight =
-            (height - topPadding - monthNameHeight) / gridXYValue
-
-
-        val temperatureValuesCount = weatherMap.values.mapTo(HashSet()) { it?.toInt() }.size
-
+        val rowSeparatorXStart = columnWidth + leftPadding
+        val rowSeparatorXStop = columnWidth * gridXYValue + leftPadding
         val columnSeparatorYStop = rowHeight * (temperatureValuesCount - 1) + topPadding
-
-        val monthY = if (temperatureValuesCount < 2) {
-            rowHeight * temperatureValuesCount + topPadding * 3
-        } else {
-            rowHeight * temperatureValuesCount + topPadding
-        }
-
+        val monthY = rowHeight * temperatureValuesCount + topPadding
 
         repeat(gridXYValue) { index ->
             // Horizontal lines drawing
             if (index <= temperatureValuesCount - 1) {
                 val rowSeparatorY = rowHeight * index + topPadding
                 drawLine(
-                    rowSeparatorXStart, rowSeparatorY, rowSeparatorXStop, rowSeparatorY, separatorsPaint
+                    rowSeparatorXStart, rowSeparatorY, rowSeparatorXStop, rowSeparatorY, separatorPaint
                 )
             }
 
             // Vertical lines drawing
-            val separatorX = (columnWidth * index).toFloat() + columnWidth / 2 + columnWidthHalf
-            drawLine(separatorX, topPadding, separatorX, columnSeparatorYStop, separatorsPaint)
+            val columnSeparatorX = columnWidth * (index + 1) + leftPadding
+            drawLine(
+                columnSeparatorX, topPadding, columnSeparatorX, columnSeparatorYStop, separatorPaint
+            )
 
             // Months names drawing
             val monthNameShort = Month.values()[index].name.take(3)
             val monthNameWidthHalf = monthTextPaint.measureText(monthNameShort) / 2
-            val gap = columnWidthHalf - monthNameWidthHalf
-            val monthX = columnWidth * index + gap + columnWidthHalf + columnWidthHalf /2
-            rotate(45f, monthX, monthY - columnWidthHalf)
+            val gap = columnWidth / 2 - monthNameWidthHalf
+            val monthX = columnWidth * (index + 0.75f) + gap + leftPadding
+            val rotationY = monthY - columnWidth / 2
+            rotate(45f, monthX, rotationY)
             drawText(monthNameShort, monthX, monthY, monthTextPaint)
-            rotate(-45f, monthX, monthY - columnWidthHalf)
+            rotate(-45f, monthX, rotationY)
         }
     }
 
-    private fun Canvas.drawDiagram() {
-        val gridXYValue = 12
-        val topPadding = resources.getDimension(R.dimen.top_padding)
-        val columnWidthF = (width / gridXYValue - 2).toFloat()
-        val monthNameLength = monthTextPaint.measureText(Month.values()[0].name.take(3))
-        val rowHeight =
-            (height - topPadding - (monthNameLength * sqrt(2.0).toFloat() / 2)) / gridXYValue
-
+    private fun Canvas.drawGraph() {
         val temperatureList = weatherMap.values.mapTo(HashSet()) { it?.toInt() }.sortedBy { it }
-
         val lowerPosY = rowHeight * (temperatureList.size - 1) + topPadding
         val pointsList = mutableListOf<PointF>()
 
@@ -168,15 +154,15 @@ class WeatherGraphView @JvmOverloads constructor(
             val monthsByTemperature = weatherMap.filterValues { it?.toInt() == temperature }.keys
 
             val pointY = lowerPosY - rowHeight * index
+
             val textX = 0f
             val textY = pointY + topPadding / 3
+            drawText("$temperature \u2103", textX, textY, temperatureTextPaint)
 
             monthsByTemperature.forEach { month ->
-                val pointX = columnWidthF * (month.ordinal + 1)
+                val pointX = columnWidth * (month.ordinal + 1) + leftPadding
                 drawPoint(pointX, pointY, pointPaint)
                 pointsList.add(PointF(pointX, pointY))
-
-                drawText("$temperature \u2103", textX, textY, temperatureTextPaint)
             }
         }
 
@@ -185,7 +171,7 @@ class WeatherGraphView @JvmOverloads constructor(
         pointsList.sortBy { it.x }
         pointsList.forEach { point ->
             if (prevPointX != null && prevPointY != null) {
-                drawLine(prevPointX!!, prevPointY!!, point.x, point.y, linePaint)
+                drawLine(prevPointX!!, prevPointY!!, point.x, point.y, graphLinePaint)
             }
 
             prevPointX = point.x
