@@ -3,12 +3,15 @@ package com.coldfier.feature_countries.ui.country_detail
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -58,6 +61,8 @@ class CountryDetailFragment : Fragment() {
         }
         viewModel.sendAction(action)
     }
+
+    private var snackbar: Snackbar? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -187,16 +192,19 @@ class CountryDetailFragment : Fragment() {
     }
 
     private fun showErrorPermissionsSnackbar(deniedPermissions: Set<String>) {
-        val snackbar = Snackbar.make(
-            binding.root, R.string.permission_error_message, Snackbar.LENGTH_INDEFINITE
-        )
+        if (snackbar?.isShown != true) {
+            snackbar = Snackbar.make(
+                binding.root, R.string.permission_error_message, Snackbar.LENGTH_INDEFINITE
+            ).apply {
+                setAction(R.string.snackbar_ok_button) {
+                    requestPermissions(deniedPermissions)
+                    dismiss()
+                }
+                animationMode = Snackbar.ANIMATION_MODE_SLIDE
+            }
 
-        snackbar.setAction(R.string.snackbar_repeat_button) {
-            requestPermissions(deniedPermissions)
-            snackbar.dismiss()
+            snackbar?.show()
         }
-
-        snackbar.show()
     }
 
     private fun initMap(lat: Double, lon: Double, zoom: Double) {

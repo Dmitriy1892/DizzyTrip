@@ -10,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import android.widget.ProgressBar
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.core_utils.di.DepsMap
 import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.core_utils.di.ViewModelFactory
@@ -81,22 +83,38 @@ class CountriesListFragment : Fragment(), HasDependencies {
         binding.rvCountries.adapter = CountriesAdapter(
             onItemClick = { viewModel.sendEvent(CountriesScreenEvent.OpenCountryFullInfo(it)) },
             onBookmarkClick = { viewModel.sendEvent(CountriesScreenEvent.ChangeIsBookmark(it)) },
-            loadImage = { countryName, imageView ->
+            loadImage = { countryName, imageView, progressBar ->
                 viewLifecycleOwner.lifecycleScope.launch {
                     val imageUri = withContext(Dispatchers.IO) {
                         viewModel.loadImageForCountry(countryName)
                     }
 
+                    var repeatCounter = 0
                     val request = ImageRequest.Builder(requireContext())
                         .data(imageUri)
-                        .target(imageView)
-                        .placeholder(R.drawable.bg_country_photo_placeholder)
-                        .error(R.drawable.bg_country_photo_placeholder)
+                        .listener(
+                            onStart = {
+                                showImagePlaceholder(imageView, progressBar, true)
+                            },
+                            onCancel = {
+                                showImagePlaceholder(imageView, progressBar, false)
+                            },
+                            onError = { request, _ ->
+                                if (repeatCounter >= 2) {
+                                    showImagePlaceholder(imageView, progressBar, false)
+                                } else {
+                                    repeatCounter++
+                                    ImageLoader(requireContext()).enqueue(request)
+                                }
+                            },
+                            onSuccess = { _, result ->
+                                imageView.setImageDrawable(result.drawable)
+                                progressBar.visibility = View.GONE
+                            }
+                        )
                         .build()
 
-                    val loader = ImageLoader.Builder(requireContext()).build()
-
-                    loader.enqueue(request)
+                    ImageLoader(requireContext()).enqueue(request)
                 }
             }
         )
@@ -108,7 +126,17 @@ class CountriesListFragment : Fragment(), HasDependencies {
         binding.etSearch.setAfterTextChangedListenerWithDebounce(
             debounceMillis = 700L,
             coroutineScope = viewLifecycleOwner.lifecycleScope,
-            actionBeforeDebounce = { viewModel.sendEvent(CountriesScreenEvent.CountrySearchLoading) }
+            actionBeforeDebounce = {
+                if (binding.etSearch.text?.isNotBlank() == true) {
+                    viewModel.sendEvent(
+                        CountriesScreenEvent.ShowSearchLoadingState(
+                            binding.etSearch.text?.toString() ?: ""
+                        )
+                    )
+                } else {
+                    viewModel.sendEvent(CountriesScreenEvent.SetEmptySearchRequest)
+                }
+            }
         ) {
             viewModel.sendEvent(CountriesScreenEvent.SearchCountryByName(it))
         }
@@ -127,7 +155,7 @@ class CountriesListFragment : Fragment(), HasDependencies {
                 } else {
                     if (
                         binding.tvSearchResult.visibility == View.INVISIBLE
-                        && binding.tvSearchResult.text.isNotEmpty()
+                        && binding.tvSearchResult.text.isNotBlank()
                         && binding.tvSearchResult.text != getString(R.string.no_search_result_text)
                     ) { showSearchResultView() }
                 }
@@ -135,37 +163,77 @@ class CountriesListFragment : Fragment(), HasDependencies {
 
         binding.tvSearchResult.setOnClickListener {
 
-            val currentSearchResult = when (val state = viewModel.countriesScreenStateFlow.value) {
-                is CountriesScreenState.Loading -> null
-                is CountriesScreenState.Complete -> state.searchResult
-                is CountriesScreenState.Error -> state.searchResult
-            }
-
-            currentSearchResult?.let { result ->
-                if (result is SearchResult.Complete) {
-                    viewModel.sendEvent(CountriesScreenEvent.OpenCountry(result.searchResult))
+            viewModel.countriesScreenStateFlow.value.searchResult?.let { searchResult ->
+                if (searchResult is SearchResult.Complete) {
+                    viewModel.sendEvent(
+                        CountriesScreenEvent.OpenSearchedCountry(searchResult.searchResult)
+                    )
                 }
             }
-        }
-
-        viewModel.navigateFlow.observeWithLifecycle {
-            val action = CountriesListFragmentDirections
-                .actionCountriesListFragmentToCountryDetailFragment(it)
-            findNavController().navigate(action)
         }
 
         viewModel.countriesScreenStateFlow.observeWithLifecycle { screenState ->
-            when (screenState) {
-                is CountriesScreenState.Loading -> {
-                    showLoadingState()
+            renderScreen(screenState)
+        }
+    }
+
+    private fun renderScreen(screenState: CountriesScreenState) {
+        with(binding) {
+
+            /**
+             * If need to show skeletons, block below shows that
+             * and returns from renderScreen() function.
+             *
+             * It need for prevent incorrect data displaying
+             */
+            if (screenState.isShowLoadingSkeleton) {
+                showLoadingState()
+                return
+            } else {
+                hideLoadingState()
+            }
+
+            screenState.userAvatar?.let {
+                ivUserAvatar.setImageDrawable(it)
+            } ?: ivUserAvatar.setImageResource(
+                com.coldfier.core_res.R.drawable.ic_user_avatar_placeholder
+            )
+
+            if (
+                screenState.searchRequest != etSearch.text.toString()
+            ) {
+                etSearch.setText(screenState.searchRequest)
+            }
+
+            updateSearchResultView(screenState.searchResult)
+
+            (rvCountries.adapter as CountriesAdapter).submitList(screenState.countryShortList)
+
+            screenState.errorDialogMessage?.let {
+                showErrorDialog()
+            }
+
+            when (val navigationState = screenState.navigationState) {
+                is NavigationState.None -> {
+                    pbLoading.visibility = View.GONE
                 }
 
-                is CountriesScreenState.Complete -> {
-                    showCompleteState(screenState.countryShortList, screenState.searchResult)
+                is NavigationState.Loading -> {
+                    pbLoading.visibility = View.VISIBLE
                 }
 
-                is CountriesScreenState.Error -> {
-                    showErrorState(screenState.message, screenState.searchResult)
+                is NavigationState.UserProfileScreen -> {
+                    pbLoading.visibility = View.GONE
+                    // TODO - ADD NAVIGATION LOGIC AFTER USER PROFILE SCREEN IMPLEMENTATION
+                    viewModel.sendEvent(CountriesScreenEvent.NavigationComplete)
+                }
+
+                is NavigationState.CountryDetailScreen -> {
+                    pbLoading.visibility = View.GONE
+                    val action = CountriesListFragmentDirections
+                        .actionCountriesListFragmentToCountryDetailFragment(navigationState.country)
+                    findNavController().navigate(action)
+                    viewModel.sendEvent(CountriesScreenEvent.NavigationComplete)
                 }
             }
         }
@@ -187,9 +255,8 @@ class CountriesListFragment : Fragment(), HasDependencies {
         }
     }
 
-    private fun showCompleteState(countryShortList: List<CountryShort>, searchResult: SearchResult?) {
-
-        updateSearchResultView(searchResult)
+    private fun hideLoadingState() {
+        (binding.rvCountries.adapter as CountriesAdapter).showLoadedData(viewModel.countriesScreenStateFlow.value.countryShortList)
 
         with(binding) {
             val textColor = ContextCompat
@@ -205,38 +272,6 @@ class CountriesListFragment : Fragment(), HasDependencies {
             tvTitle.setTextColor(textColor)
             hideSkeletons(tvHead, cvUserAvatarContainer, etSearch, tvTitle)
         }
-
-        if (countryShortList.isEmpty()) {
-            binding.viewNoCountries.visibility = View.VISIBLE
-            binding.rvCountries.visibility = View.GONE
-        } else {
-            binding.viewNoCountries.visibility = View.GONE
-            binding.rvCountries.visibility = View.VISIBLE
-            (binding.rvCountries.adapter as CountriesAdapter).showLoadedData(countryShortList)
-        }
-    }
-
-    private fun showErrorState(errorMessage: String, searchResult: SearchResult?) {
-
-        updateSearchResultView(searchResult)
-
-        with(binding) {
-            val textColor = ContextCompat
-                .getColor(requireContext(), com.coldfier.core_res.R.color.title_text_color)
-            val hintColor = ContextCompat
-                .getColor(requireContext(), com.coldfier.core_res.R.color.text_hint_color)
-            val searchDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_search)
-            tvHead.setTextColor(textColor)
-            ivUserAvatar.visibility = View.VISIBLE
-            etSearch.setHintTextColor(hintColor)
-            etSearch.setTextColor(textColor)
-            etSearch.setCompoundDrawables(searchDrawable, null, null, null)
-            tvTitle.setTextColor(textColor)
-            hideSkeletons(tvHead, cvUserAvatarContainer, etSearch, tvTitle)
-        }
-
-        binding.viewNoCountries.visibility = View.VISIBLE
-        binding.rvCountries.visibility = View.GONE
     }
 
     private fun showSkeletons(vararg views: View) {
@@ -293,6 +328,17 @@ class CountriesListFragment : Fragment(), HasDependencies {
         }
     }
 
+    private fun showErrorDialog() {
+        AlertDialog.Builder(requireContext())
+            .setMessage(R.string.error_country_loading)
+            .setCancelable(false)
+            .setPositiveButton(R.string.error_dialog_button_ok) { dialog, _ ->
+                dialog.dismiss()
+                viewModel.sendEvent(CountriesScreenEvent.ErrorDialogClosed)
+            }
+            .show()
+    }
+
     private fun showSearchResultView() {
         binding.tvSearchResult.visibility = View.VISIBLE
 
@@ -320,5 +366,12 @@ class CountriesListFragment : Fragment(), HasDependencies {
         animation.fillAfter = true
         binding.tvSearchResult.startAnimation(animation)
         binding.tvSearchResult.visibility = View.INVISIBLE
+    }
+
+    private fun showImagePlaceholder(
+        imageView: ImageView, progressBar: ProgressBar, showProgress: Boolean
+    ) {
+        imageView.setImageResource(R.drawable.bg_country_photo_placeholder)
+        progressBar.visibility = if (showProgress) View.VISIBLE else View.GONE
     }
 }

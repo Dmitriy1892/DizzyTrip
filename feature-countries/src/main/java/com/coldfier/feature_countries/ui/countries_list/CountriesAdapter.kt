@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -16,7 +17,7 @@ import com.coldfier.feature_countries.databinding.RvItemCountryBinding
 class CountriesAdapter(
     private val onItemClick: (CountryShort) -> Unit,
     private val onBookmarkClick: (CountryShort) -> Unit,
-    private val loadImage: (countryName: String, imageView: ImageView) -> Unit
+    private val loadImage: (countryName: String, imageView: ImageView, progressBar: ProgressBar) -> Unit
 ): ListAdapter<CountryShort, CountriesAdapter.CountryHolder>(CountryDiffUtil()) {
 
     private var isNeedToShowSkeletons: Boolean = false
@@ -86,7 +87,7 @@ class CountriesAdapter(
             binding.tvCountryName.text = item.name ?: ""
             binding.tvCountryName.foreground = null
 
-            loadImage.invoke(item.name ?: "", binding.ivCountryPhoto)
+            loadImage.invoke(item.name ?: "", binding.ivCountryPhoto, binding.pbLoading)
 
             binding.fabBookmark.visibility = View.VISIBLE
 

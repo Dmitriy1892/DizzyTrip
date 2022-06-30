@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class CountryDetailViewModel constructor(
+internal class CountryDetailViewModel constructor(
     country: Country,
     private val countryDetailUseCase: CountryDetailUseCase
 ) : ViewModel() {
@@ -65,7 +65,7 @@ class CountryDetailViewModel constructor(
     }
 }
 
-data class CountryDetailScreenState(
+internal data class CountryDetailScreenState(
     val country: Country,
     val imageUriList: List<Uri> = listOf(Uri.EMPTY),
     val deniedPermissions: Set<String> = setOf(
@@ -75,7 +75,7 @@ data class CountryDetailScreenState(
     )
 )
 
-sealed interface CountryDetailScreenAction {
+internal sealed interface CountryDetailScreenAction {
     class DeniedPermissions(val deniedPermissions: Set<String>) : CountryDetailScreenAction
     object GrantedPermissions : CountryDetailScreenAction
 }

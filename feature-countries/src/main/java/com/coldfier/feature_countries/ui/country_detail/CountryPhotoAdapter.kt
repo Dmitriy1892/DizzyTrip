@@ -15,7 +15,7 @@ import coil.request.ImageRequest
 import com.coldfier.feature_countries.R
 import com.coldfier.feature_countries.databinding.VpCountryPhotoBinding
 
-class CountryPhotoAdapter : ListAdapter<Uri, CountryPhotoAdapter.CountryPhotoViewHolder>(
+internal class CountryPhotoAdapter : ListAdapter<Uri, CountryPhotoAdapter.CountryPhotoViewHolder>(
     CountryPhotoDiffUtil()
 ) {
 

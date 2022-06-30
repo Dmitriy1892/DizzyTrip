@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coldfier.core_data.repository.models.Vaccination
 import com.coldfier.feature_countries.databinding.RvItemVaccinationBinding
 
-class CountryVaccinationAdapter : ListAdapter<Vaccination, CountryVaccinationAdapter.CountryVaccinationHolder>(
+internal class CountryVaccinationAdapter : ListAdapter<Vaccination, CountryVaccinationAdapter.CountryVaccinationHolder>(
     CountryVaccinationDiffUtil()
 ) {
 

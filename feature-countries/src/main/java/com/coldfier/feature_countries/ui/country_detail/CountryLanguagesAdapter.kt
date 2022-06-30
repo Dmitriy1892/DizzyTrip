@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coldfier.core_data.repository.models.Language
 import com.coldfier.feature_countries.databinding.RvItemLanguageBinding
 
-class CountryLanguagesAdapter : ListAdapter<Language, CountryLanguagesAdapter.CountryLanguagesViewHolder>(
+internal class CountryLanguagesAdapter : ListAdapter<Language, CountryLanguagesAdapter.CountryLanguagesViewHolder>(
     CountryLanguageDiffUtil()
 ) {
 
