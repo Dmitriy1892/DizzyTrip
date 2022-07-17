@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@null" >
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="14dp" >
+
+        <TextView
+            android:id="@+id/tv_country_name"
+            style="@style/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="130dp"
+            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:ellipsize="marquee"
+            tools:text="Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name Country Name "/>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginStart="25dp"
+        android:layout_gravity="bottom"
+        app:cardCornerRadius="14dp" >
+
+        <ImageView
+            android:id="@+id/iv_country_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/bg_country_photo_placeholder"
+            android:scaleType="centerCrop" />
+
+        <ProgressBar
+            android:id="@+id/pb_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:indeterminateTint="#19696E"
+            android:indeterminateTintMode="src_atop"
+            tools:visibility="visible"/>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

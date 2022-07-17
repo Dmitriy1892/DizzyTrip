@@ -78,7 +78,7 @@ internal class CountryPhotoAdapter : ListAdapter<Uri, CountryPhotoAdapter.Countr
 
         private fun showPlaceholder(isLoading: Boolean) {
             val placeholder = ContextCompat.getDrawable(
-                binding.root.context, R.drawable.bg_country_photo_placeholder
+                binding.root.context, com.coldfier.core_res.R.drawable.bg_country_photo_placeholder
             )
 
             binding.ivCountryPhoto.setImageDrawable(placeholder)

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_location_text">My location</string>
+    <string name="click_for_scroll_map_to_country">Click for scroll map to country</string>
+</resources>

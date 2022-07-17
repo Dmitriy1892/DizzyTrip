@@ -4,7 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/MyProjects/DizzyTrip/app/src/main/res/layout/activity_main.xml" value="0.18072916666666666" />
+        <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/bg_country_photo_placeholder.xml" value="0.1915" />
+        <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/bg_search_field.xml" value="0.2155" />
+        <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/ic_location_marker_filled.xml" value="0.236" />
+        <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/ic_search.xml" value="0.2155" />
         <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/ic_user_avatar_placeholder.xml" value="0.189" />
+        <entry key="..\:/MyProjects/DizzyTrip/core-res/src/main/res/drawable/ic_user_location_marker.xml" value="0.2155" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-bookmarks-sample-app/src/main/res/layout/activity_feature_bookmarks.xml" value="0.35572916666666665" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries-sample-app/src/main/res/layout/activity_main.xml" value="0.16666666666666666" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/bg_country_photo_placeholder.xml" value="0.231" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/bg_layout_rounded_top.xml" value="0.3195" />
@@ -24,18 +30,29 @@
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_location_marker_filled.xml" value="0.231" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/ic_tab_layout_indicator.xml" value="0.231" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/drawable/selector_tab_indicator.xml" value="0.231" />
-        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_countries_list.xml" value="0.16666666666666666" />
-        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_country_detail.xml" value="0.22" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_countries_list.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/fragment_country_detail.xml" value="0.8333333333333334" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_country.xml" value="0.18229166666666666" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_item_country.xml" value="0.3333333333333333" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_item_language.xml" value="0.3333333333333333" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/rv_item_vaccination.xml" value="0.3333333333333333" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/vp_country_image.xml" value="0.3546875" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/vp_country_photo.xml" value="0.22" />
         <entry key="..\:/MyProjects/DizzyTrip/feature-countries/src/main/res/layout/vp_item_image.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map-sample-app/src/main/res/layout/activity_feature_map_sample.xml" value="0.35572916666666665" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/drawable/bg_info_window.xml" value="0.236" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/drawable/bg_info_window_9_patch.xml" value="0.236" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/drawable/ic_arrow_back.xml" value="0.236" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/drawable/ic_bg_info_window.xml" value="0.236" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/drawable/info_window.xml" value="0.236" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/drawable/rv_item_country.xml" value="0.1905" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/layout/fragment_map.xml" value="0.3333333333333333" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/layout/map_info_window.xml" value="0.4466666666666667" />
+        <entry key="..\:/MyProjects/DizzyTrip/feature-map/src/main/res/layout/rv_item_country.xml" value="0.3333333333333333" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

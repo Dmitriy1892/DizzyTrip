@@ -3,15 +3,12 @@ package com.coldfier.feature_countries.ui.country_detail
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -62,6 +59,12 @@ class CountryDetailFragment : Fragment() {
         viewModel.sendAction(action)
     }
 
+    private val backPressedDispatcher = OnBackPressedDispatcher().apply {
+        addCallback {
+            findNavController().popBackStack()
+        }
+    }
+
     private var snackbar: Snackbar? = null
 
     override fun onAttach(context: Context) {
@@ -78,12 +81,6 @@ class CountryDetailFragment : Fragment() {
     ): View {
         _binding = FragmentCountryDetailBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    private val backPressedDispatcher = OnBackPressedDispatcher().apply {
-        addCallback {
-            findNavController().popBackStack()
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,11 +102,11 @@ class CountryDetailFragment : Fragment() {
         }
 
         viewModel.screenStateFlow.observeWithLifecycle {
-            updateScreenState(it)
+            renderState(it)
         }
     }
 
-    private fun updateScreenState(screenState: CountryDetailScreenState) {
+    private fun renderState(screenState: CountryDetailScreenState) {
         with(binding) {
             (vpImageHolder.adapter as CountryPhotoAdapter).submitList(screenState.imageUriList)
 
@@ -194,9 +191,9 @@ class CountryDetailFragment : Fragment() {
     private fun showErrorPermissionsSnackbar(deniedPermissions: Set<String>) {
         if (snackbar?.isShown != true) {
             snackbar = Snackbar.make(
-                binding.root, R.string.permission_error_message, Snackbar.LENGTH_INDEFINITE
+                binding.root, com.coldfier.core_res.R.string.permission_error_message, Snackbar.LENGTH_INDEFINITE
             ).apply {
-                setAction(R.string.snackbar_ok_button) {
+                setAction(com.coldfier.core_res.R.string.snackbar_ok_button) {
                     requestPermissions(deniedPermissions)
                     dismiss()
                 }
@@ -222,7 +219,7 @@ class CountryDetailFragment : Fragment() {
         val marker = Marker(binding.mapView).apply {
             position = point
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_marker_filled)
+            icon = ContextCompat.getDrawable(requireContext(), com.coldfier.core_res.R.drawable.ic_location_marker_filled)
         }
 
         binding.mapView.overlays.add(marker)

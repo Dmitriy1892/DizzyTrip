@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation project(path: ':feature-countries')
     implementation project(path: ':core-utils')
     implementation project(path: ':core-data')

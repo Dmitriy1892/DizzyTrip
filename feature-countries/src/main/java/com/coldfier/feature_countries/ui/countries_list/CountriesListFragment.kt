@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.coldfier.feature_countries.R
 import com.coldfier.core_utils.di.DepsMap
 import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.core_utils.di.ViewModelFactory
@@ -27,7 +28,6 @@ import com.coldfier.core_utils.di.findDependencies
 import com.coldfier.core_utils.ui.observeWithLifecycle
 import com.coldfier.core_utils.ui.setAfterTextChangedListenerWithDebounce
 import com.coldfier.feature_countries.CountriesDeps
-import com.coldfier.feature_countries.R
 import com.coldfier.feature_countries.databinding.FragmentCountriesListBinding
 import com.coldfier.feature_countries.di.CountriesComponent
 import com.coldfier.feature_countries.di.DaggerCountriesComponent
@@ -156,7 +156,7 @@ class CountriesListFragment : Fragment(), HasDependencies {
                     if (
                         binding.tvSearchResult.visibility == View.INVISIBLE
                         && binding.tvSearchResult.text.isNotBlank()
-                        && binding.tvSearchResult.text != getString(R.string.no_search_result_text)
+                        && binding.tvSearchResult.text != getString(com.coldfier.core_res.R.string.no_search_result_text)
                     ) { showSearchResultView() }
                 }
             }
@@ -263,7 +263,7 @@ class CountriesListFragment : Fragment(), HasDependencies {
                 .getColor(requireContext(), com.coldfier.core_res.R.color.title_text_color)
             val hintColor = ContextCompat
                 .getColor(requireContext(), com.coldfier.core_res.R.color.text_hint_color)
-            val searchDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_search)
+            val searchDrawable = ContextCompat.getDrawable(requireContext(), com.coldfier.core_res.R.drawable.ic_search)
             tvHead.setTextColor(textColor)
             ivUserAvatar.visibility = View.VISIBLE
             etSearch.setHintTextColor(hintColor)
@@ -310,19 +310,19 @@ class CountriesListFragment : Fragment(), HasDependencies {
 
             is SearchResult.Complete -> {
                 binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = searchResult.searchResult.name ?: getString(R.string.no_search_result_text)
+                binding.tvSearchResult.text = searchResult.searchResult.name ?: getString(com.coldfier.core_res.R.string.no_search_result_text)
                 if (binding.tvSearchResult.visibility == View.INVISIBLE) showSearchResultView()
             }
 
             is SearchResult.Error -> {
                 binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = getString(R.string.no_search_result_text)
+                binding.tvSearchResult.text = getString(com.coldfier.core_res.R.string.no_search_result_text)
                 if (binding.tvSearchResult.visibility == View.INVISIBLE) showSearchResultView()
             }
 
             null -> {
                 binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = getString(R.string.no_search_result_text)
+                binding.tvSearchResult.text = getString(com.coldfier.core_res.R.string.no_search_result_text)
                 if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
             }
         }
@@ -330,9 +330,9 @@ class CountriesListFragment : Fragment(), HasDependencies {
 
     private fun showErrorDialog() {
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.error_country_loading)
+            .setMessage(com.coldfier.core_res.R.string.error_country_loading)
             .setCancelable(false)
-            .setPositiveButton(R.string.error_dialog_button_ok) { dialog, _ ->
+            .setPositiveButton(com.coldfier.core_res.R.string.error_dialog_button_ok) { dialog, _ ->
                 dialog.dismiss()
                 viewModel.sendEvent(CountriesScreenEvent.ErrorDialogClosed)
             }
@@ -371,7 +371,7 @@ class CountriesListFragment : Fragment(), HasDependencies {
     private fun showImagePlaceholder(
         imageView: ImageView, progressBar: ProgressBar, showProgress: Boolean
     ) {
-        imageView.setImageResource(R.drawable.bg_country_photo_placeholder)
+        imageView.setImageResource(com.coldfier.core_res.R.drawable.bg_country_photo_placeholder)
         progressBar.visibility = if (showProgress) View.VISIBLE else View.GONE
     }
 }

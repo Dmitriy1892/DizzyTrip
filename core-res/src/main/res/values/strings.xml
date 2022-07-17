@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_error_message">Please approve all permissions</string>
+    <string name="snackbar_ok_button">OK</string>
+    <string name="data_not_loaded_text">Data not loaded</string>
+    <string name="error_country_loading">Error is occurred. Please, check internet connection and try again</string>
+    <string name="error_dialog_button_ok">OK</string>
+    <string name="iv_search_hint">Discover a country</string>
+    <string name="no_search_result_text">No results found</string>
+</resources>
