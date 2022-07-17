@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class MapViewModel @Inject constructor(
+internal class MapViewModel @Inject constructor(
     private val mapUseCase: MapUseCase
 ) : ViewModel() {
 
@@ -158,7 +158,7 @@ class MapViewModel @Inject constructor(
     }
 }
 
-data class MapScreenState(
+internal data class MapScreenState(
     val isShowLoading: Boolean = false,
     val isShowNoDataLoaded: Boolean = false,
     val countryList: List<CountryShort> = listOf(),
@@ -176,13 +176,13 @@ data class MapScreenState(
     val searchResult: SearchResult? = null
 )
 
-sealed interface SearchResult {
+internal sealed interface SearchResult {
     object Loading : SearchResult
     class Complete(val searchResult: Country) : SearchResult
     object Error : SearchResult
 }
 
-sealed interface MapScreenAction {
+internal sealed interface MapScreenAction {
     object PermissionsGranted : MapScreenAction
     class PermissionsDenied(val deniedPermissions: Set<String>) : MapScreenAction
     object MapInitialized : MapScreenAction

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="languages">Languages</string>
+    <string name="official">Official</string>
+    <string name="weather">Weather</string>
+    <string name="vaccination">Vaccination</string>
+    <string name="advices">Advices</string>
+    <string name="electricity">Electricity</string>
+    <string name="voltage">Voltage: <b>%1$s V</b></string>
+    <string name="plug_types">Plug types: <b>%1$s</b></string>
+    <string name="currency">Currency</string>
+    <string name="phone_numbers">Phone numbers</string>
+    <string name="calling_code">Calling code: <b>%1$s</b></string>
+    <string name="ambulance">Ambulance: <b>%1$s</b></string>
+    <string name="police">Police: <b>%1$s</b></string>
+    <string name="fire">Fire: <b>%1$s</b></string>
+    <string name="water">Water</string>
+    <string name="no_water_info">No info about water</string>
+</resources>

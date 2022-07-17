@@ -82,6 +82,4 @@
                 tools:text="Belarus" />
         </LinearLayout>
     </LinearLayout>
-
-
 </androidx.cardview.widget.CardView>

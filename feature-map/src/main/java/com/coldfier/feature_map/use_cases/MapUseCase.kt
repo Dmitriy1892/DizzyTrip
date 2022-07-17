@@ -6,7 +6,7 @@ import com.coldfier.core_data.repository.repositories.CountriesRepository
 import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
 import javax.inject.Inject
 
-class MapUseCase @Inject constructor(
+internal class MapUseCase @Inject constructor(
     private val countriesRepository: CountriesRepository,
     private val pixabayImagesRepository: PixabayImagesRepository
 ) {

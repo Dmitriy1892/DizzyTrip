@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.feature_map.databinding.RvItemCountryBinding
 
-class MapCountriesAdapter(
+internal class MapCountriesAdapter(
     private val loadImage: (countryName: String, imageView: ImageView, progressBar: ProgressBar) -> Unit,
 ) : ListAdapter<CountryShort, MapCountriesAdapter.MapCountryViewHolder>(MapCountriesDiffUtil()) {
 
@@ -28,7 +28,7 @@ class MapCountriesAdapter(
         holder.bind(currentList[position])
     }
 
-    inner class MapCountryViewHolder(
+    internal inner class MapCountryViewHolder(
         private val binding: RvItemCountryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -38,7 +38,7 @@ class MapCountriesAdapter(
         }
     }
 
-    class MapCountriesDiffUtil : DiffUtil.ItemCallback<CountryShort>() {
+    internal class MapCountriesDiffUtil : DiffUtil.ItemCallback<CountryShort>() {
         override fun areItemsTheSame(oldItem: CountryShort, newItem: CountryShort): Boolean {
             return oldItem.name == newItem.name
         }

@@ -1,6 +1,6 @@
 package com.coldfier.feature_map.ui
 
-interface OnSnapPositionChangeListener {
+internal interface OnSnapPositionChangeListener {
 
     fun  onSnapPositionChange(position: Int)
 }

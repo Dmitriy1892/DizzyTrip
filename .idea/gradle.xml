@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/feature-bookmarks-sample-app" />
             <option value="$PROJECT_DIR$/feature-countries" />
             <option value="$PROJECT_DIR$/feature-countries-sample-app" />
+            <option value="$PROJECT_DIR$/feature-country-detail" />
             <option value="$PROJECT_DIR$/feature-map" />
             <option value="$PROJECT_DIR$/feature-map-sample-app" />
           </set>

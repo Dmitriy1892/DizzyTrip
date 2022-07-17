@@ -10,6 +10,7 @@
       <module name="DizzyTrip.feature-bookmarks-sample-app" target="11" />
       <module name="DizzyTrip.feature-countries" target="11" />
       <module name="DizzyTrip.feature-countries-sample-app" target="11" />
+      <module name="DizzyTrip.feature-country-detail" target="11" />
       <module name="DizzyTrip.feature-map" target="11" />
       <module name="DizzyTrip.feature-map-sample-app" target="11" />
     </bytecodeTargetLevel>

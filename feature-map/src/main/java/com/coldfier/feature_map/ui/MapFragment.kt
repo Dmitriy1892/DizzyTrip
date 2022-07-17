@@ -194,7 +194,7 @@ class MapFragment : Fragment() {
 
                 binding.tvSearchResult.visibility == View.INVISIBLE
                         && binding.tvSearchResult.text.isNotBlank()
-                        && binding.tvSearchResult.text != getString(com.coldfier.core_res.R.string.no_search_result_text) -> {
+                        && binding.tvSearchResult.text != getString(R.string.no_search_result_text) -> {
                     showSearchResultView()
                 }
             }
@@ -472,13 +472,13 @@ class MapFragment : Fragment() {
 
             is SearchResult.Error -> {
                 binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = getString(com.coldfier.core_res.R.string.no_search_result_text)
+                binding.tvSearchResult.text = getString(R.string.no_search_result_text)
                 if (binding.tvSearchResult.visibility == View.INVISIBLE) showSearchResultView()
             }
 
             null -> {
                 binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = getString(com.coldfier.core_res.R.string.no_search_result_text)
+                binding.tvSearchResult.text = getString(R.string.no_search_result_text)
                 if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
             }
         }
