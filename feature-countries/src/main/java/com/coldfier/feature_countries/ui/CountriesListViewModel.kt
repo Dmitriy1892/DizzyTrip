@@ -2,13 +2,17 @@ package com.coldfier.feature_countries.ui
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import coil.size.Dimension
 import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.core_utils.ui.launchInIOCoroutine
 import com.coldfier.feature_countries.use_cases.CountriesListUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class CountriesListViewModel @Inject constructor(
@@ -21,7 +25,8 @@ internal class CountriesListViewModel @Inject constructor(
     
     init {
         launchInIOCoroutine {
-            countriesListUseCase.countryShortsFlow.catch {
+            countriesListUseCase.countryShortsFlow.catch { error ->
+                Log.e("CountriesListViewModel", error.message.toString())
                 _countriesScreenStateFlow.value = _countriesScreenStateFlow.value.copy(
                     isShowLoadingSkeleton = false,
                     countryShortList = listOf()
@@ -99,7 +104,12 @@ internal class CountriesListViewModel @Inject constructor(
                 }
 
                 is CountriesScreenEvent.ChangeIsBookmark -> {
-                    // TODO
+                    withContext(Dispatchers.IO) {
+                        countriesListUseCase.changeIsBookmark(
+                            countryName = countriesScreenEvent.countryShort.name ?: "",
+                            isBookmark = !(countriesScreenEvent.countryShort.isAddedToBookmark ?: false)
+                        )
+                    }
                 }
 
                 is CountriesScreenEvent.NavigationComplete -> {

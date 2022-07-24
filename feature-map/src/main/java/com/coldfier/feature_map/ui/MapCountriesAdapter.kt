@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.coldfier.core_data.repository.models.CountryShort
-import com.coldfier.feature_map.databinding.RvItemCountryBinding
+import com.coldfier.feature_map.databinding.RvItemCountryMapBinding
 
 internal class MapCountriesAdapter(
     private val loadImage: (countryName: String, imageView: ImageView, progressBar: ProgressBar) -> Unit,
@@ -16,7 +16,7 @@ internal class MapCountriesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MapCountryViewHolder {
         return MapCountryViewHolder(
-            RvItemCountryBinding.inflate(
+            RvItemCountryMapBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -29,7 +29,7 @@ internal class MapCountriesAdapter(
     }
 
     internal inner class MapCountryViewHolder(
-        private val binding: RvItemCountryBinding
+        private val binding: RvItemCountryMapBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(country: CountryShort) {

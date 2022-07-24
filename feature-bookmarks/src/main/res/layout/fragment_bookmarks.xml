@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fillViewport="true" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/layout_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="30dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_head"
+                style="@style/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="46dp"
+                android:text="@string/bookmarks"
+                android:textSize="28sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_bookmarks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/rv_item_bookmark"
+                tools:itemCount="3"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_no_data"
+            style="@style/regularText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingHorizontal="30dp"
+            android:text="@string/bookmarks_empty_text"
+            android:textSize="20sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <ProgressBar
+            android:id="@+id/pb_loading"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#19696E"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+
+
+
+</ScrollView>

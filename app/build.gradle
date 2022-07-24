@@ -38,6 +38,11 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':feature-countries')
+    implementation project(path: ':feature-country-detail')
+    implementation project(path: ':feature-map')
+    implementation project(path: ':feature-bookmarks')
+    implementation project(path: ':core-data')
     implementation project(path: ':core-utils')
     implementation project(path: ':core-res')
 

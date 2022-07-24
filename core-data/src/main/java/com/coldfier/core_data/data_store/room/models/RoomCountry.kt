@@ -28,5 +28,5 @@ internal data class RoomCountry(
     var waterFull: String? = null,
     var currencyName: String? = null,
     var currencyCode: String? = null,
-    var currencySymbol: String? = null,
+    var currencySymbol: String? = null
 )

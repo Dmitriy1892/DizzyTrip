@@ -13,18 +13,14 @@ class MainActivity : AppCompatActivity(), HasDependencies {
 
     private val countriesDeps = object : CountriesDeps {
         override fun navigateToCountryDetailFragment(country: Country) {
-            countryDetailDeps.localCountry = country
+            countryDetailDeps.country = country
             findNavController(R.id.container)
                 .navigate(R.id.action_countriesListFragment_to_countryDetailFragment)
         }
     }
 
     private val countryDetailDeps = object : CountryDetailDeps {
-        var localCountry = Country()
-
-        override fun getCountry(): Country {
-            return localCountry
-        }
+        override var country: Country = Country()
     }
 
     override val depsMap: DepsMap = mapOf(

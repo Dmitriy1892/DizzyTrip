@@ -13,7 +13,8 @@ internal fun NetCountryShort.convertToRoomCountryShort() = RoomCountryShort(
 
 internal fun RoomCountryShort.convertToCountryShort() = CountryShort(
     name = name,
-    uri = uri
+    uri = uri,
+    isAddedToBookmark = isBookmark
 )
 
 internal fun NetCountryExpanded.convertToRoomCountryFullModel() = RoomCountryFullModel(

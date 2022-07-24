@@ -8,7 +8,9 @@ import com.coldfier.core_data.repository.convertToCountryShort
 import com.coldfier.core_data.repository.convertToRoomCountryFullModel
 import com.coldfier.core_data.repository.convertToRoomCountryShort
 import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_data.repository.models.CountryShort
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -31,13 +33,19 @@ internal class CountriesRepositoryImpl @Inject constructor(
 
     }.flowOn(Dispatchers.IO)
 
+    override val bookmarksFlow: Flow<List<CountryShort>> = countriesRoomDataSource.bookmarksFlow
+        .map { list -> list.map { it.convertToCountryShort() } }
+        .flowOn(Dispatchers.IO)
+
     override suspend fun getCountryByUri(uri: Uri): Country {
         return withContext(Dispatchers.IO) {
             val netCountry = countriesNetDataSource.getCountryByUrl(uri)
             val roomCountry = netCountry.convertToRoomCountryFullModel()
             countriesRoomDataSource.saveRoomCountryFullModel(roomCountry)
 
-            roomCountry.convertToCountry()
+            val isBookmark =
+                countriesRoomDataSource.countryIsBookmark(roomCountry.name ?: "")
+            roomCountry.convertToCountry().apply { isAddedToBookmark = isBookmark }
         }
     }
 
@@ -47,7 +55,15 @@ internal class CountriesRepositoryImpl @Inject constructor(
             val roomCountry = netCountry.convertToRoomCountryFullModel()
             countriesRoomDataSource.saveRoomCountryFullModel(roomCountry)
 
-            roomCountry.convertToCountry()
+            val isBookmark =
+                countriesRoomDataSource.countryIsBookmark(roomCountry.name ?: "")
+            roomCountry.convertToCountry().apply { isAddedToBookmark = isBookmark }
+        }
+    }
+
+    override suspend fun updateIsBookmark(countryName: String, isBookmark: Boolean) {
+        withContext(Dispatchers.IO) {
+            countriesRoomDataSource.updateIsBookmark(countryName, isBookmark)
         }
     }
 }

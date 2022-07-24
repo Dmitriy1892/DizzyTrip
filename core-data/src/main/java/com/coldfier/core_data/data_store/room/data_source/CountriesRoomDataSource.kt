@@ -39,6 +39,17 @@ internal class CountriesRoomDataSource @Inject constructor(
     val countryShortsFlow = countriesDao.getCountryShorts()
         .flowOn(Dispatchers.IO)
 
+    val bookmarksFlow = countriesDao.getBookmarks()
+        .flowOn(Dispatchers.IO)
+
+    suspend fun updateIsBookmark(countryName: String, isBookmark: Boolean) {
+        countriesDao.updateBookmarkStatus(countryName, isBookmark)
+    }
+
+    suspend fun countryIsBookmark(countryName: String): Boolean {
+        return countriesDao.countryIsBookmark(countryName)
+    }
+
     suspend fun saveRoomCountryFullModel(roomCountryFullModel: RoomCountryFullModel) {
         coroutineScope {
             val country = roomCountryFullModel.convertToRoomCountry()
@@ -67,5 +78,7 @@ internal class CountriesRoomDataSource @Inject constructor(
     suspend fun saveRoomCountryShorts(roomCountryShorts: List<RoomCountryShort>) {
         countriesDao.insertCountryShorts(*roomCountryShorts.toTypedArray())
     }
+
+
 }
 

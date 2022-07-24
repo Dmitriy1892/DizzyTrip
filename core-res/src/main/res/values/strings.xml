@@ -7,4 +7,7 @@
     <string name="error_dialog_button_ok">OK</string>
     <string name="iv_search_hint">Discover a country</string>
     <string name="no_search_result_text">No results found</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="countries">Countries</string>
+    <string name="map">Map</string>
 </resources>

@@ -4,16 +4,20 @@ import android.Manifest
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_utils.ui.launchInIOCoroutine
 import com.coldfier.feature_country_detail.use_cases.CountryDetailUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class CountryDetailViewModel constructor(
     country: Country,
@@ -49,15 +53,34 @@ internal class CountryDetailViewModel constructor(
 
 
     fun sendAction(action: CountryDetailScreenAction) {
-        when (action) {
-            is CountryDetailScreenAction.DeniedPermissions -> {
-                _screenStateFlow.update { it.copy(deniedPermissions = action.deniedPermissions) }
-            }
+        viewModelScope.launch(Dispatchers.Default) {
+            when (action) {
+                is CountryDetailScreenAction.ChangeIsBookmark -> {
 
-            is CountryDetailScreenAction.GrantedPermissions -> {
-                _screenStateFlow.update { it.copy(deniedPermissions = setOf()) }
+                    countryDetailUseCase.changeIsBookmark(
+                        countryName = _screenStateFlow.value.country.name ?: "",
+                        isBookmark = !(_screenStateFlow.value.country.isAddedToBookmark ?: false)
+                    )
+
+                    _screenStateFlow.update {
+                        it.copy(
+                            country = it.country.copy(
+                                isAddedToBookmark = !(it.country.isAddedToBookmark ?: false)
+                            )
+                        )
+                    }
+                }
+
+                is CountryDetailScreenAction.DeniedPermissions -> {
+                    _screenStateFlow.update { it.copy(deniedPermissions = action.deniedPermissions) }
+                }
+
+                is CountryDetailScreenAction.GrantedPermissions -> {
+                    _screenStateFlow.update { it.copy(deniedPermissions = setOf()) }
+                }
             }
         }
+
     }
 }
 
@@ -72,6 +95,7 @@ internal data class CountryDetailScreenState(
 )
 
 internal sealed interface CountryDetailScreenAction {
+    object ChangeIsBookmark : CountryDetailScreenAction
     class DeniedPermissions(val deniedPermissions: Set<String>) : CountryDetailScreenAction
     object GrantedPermissions : CountryDetailScreenAction
 }

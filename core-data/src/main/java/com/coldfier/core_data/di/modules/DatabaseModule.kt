@@ -14,7 +14,9 @@ internal class DatabaseModule {
     @CoreDataScope
     @Provides
     fun provideCountryDatabase(context: Context): CountryDatabase {
-        return Room.databaseBuilder(context, CountryDatabase::class.java, "country-database").build()
+        return Room.databaseBuilder(context, CountryDatabase::class.java, "country-database")
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @CoreDataScope

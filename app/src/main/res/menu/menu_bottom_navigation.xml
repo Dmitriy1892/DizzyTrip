@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/countriesListFragment"
+        android:icon="@drawable/selector_countries"
+        android:title="@string/countries" />
+    <item android:id="@+id/mapFragment"
+        android:icon="@drawable/selector_map"
+        android:title="@string/map" />
+    <item android:id="@+id/bookmarksFragment"
+        android:icon="@drawable/selector_bookmarks"
+        android:title="@string/bookmarks" />
+</menu>

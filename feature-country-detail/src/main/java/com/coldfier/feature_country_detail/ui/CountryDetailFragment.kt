@@ -41,7 +41,7 @@ class CountryDetailFragment : Fragment() {
     internal lateinit var deps: CountryDetailDeps
 
     private val viewModel: CountryDetailViewModel by viewModels {
-        viewModelFactory.create(deps.getCountry())
+        viewModelFactory.create(deps.country)
     }
 
     private var _binding: FragmentCountryDetailBinding? = null
@@ -99,7 +99,7 @@ class CountryDetailFragment : Fragment() {
         }
 
         binding.buttonBookmark.setOnClickListener {
-            // TODO - SAVE/DELETE BOOKMARK
+            viewModel.sendAction(CountryDetailScreenAction.ChangeIsBookmark)
         }
 
         viewModel.screenStateFlow.observeWithLifecycle {
@@ -109,6 +109,15 @@ class CountryDetailFragment : Fragment() {
 
     private fun renderState(screenState: CountryDetailScreenState) {
         with(binding) {
+
+            val bookmarkRes = if (screenState.country.isAddedToBookmark == true) {
+                com.coldfier.core_res.R.drawable.ic_bookmark_on
+            } else {
+                com.coldfier.core_res.R.drawable.ic_bookmark_off
+            }
+
+            buttonBookmark.setImageResource(bookmarkRes)
+
             (vpImageHolder.adapter as CountryPhotoAdapter).submitList(screenState.imageUriList)
 
             val country = screenState.country

@@ -29,5 +29,6 @@ data class Country(
     var currencySymbol: String? = null,
     var weatherByMonth: Map<Month, Weather>? = null,
     var advices: Map<AdviceType, Advice>? = null,
-    var neighborCountries: List<NeighborCountry>? = null
+    var neighborCountries: List<NeighborCountry>? = null,
+    var isAddedToBookmark: Boolean? = null
 ): Parcelable

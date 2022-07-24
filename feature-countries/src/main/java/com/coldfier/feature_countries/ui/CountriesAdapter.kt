@@ -92,7 +92,15 @@ class CountriesAdapter(
             binding.fabBookmark.visibility = View.VISIBLE
 
             binding.root.setOnClickListener { onItemClick(item) }
-            binding.fabBookmark.setOnClickListener { onBookmarkClick(item) }
+            binding.fabBookmark.setOnClickListener {
+                onBookmarkClick(item)
+                binding.pbLoading.visibility = View.VISIBLE
+            }
+
+            val bookmarkRes =
+                if (item.isAddedToBookmark == true) com.coldfier.core_res.R.drawable.ic_bookmark_on
+                else com.coldfier.core_res.R.drawable.ic_bookmark_off
+            binding.fabBookmark.setImageResource(bookmarkRes)
         }
     }
 

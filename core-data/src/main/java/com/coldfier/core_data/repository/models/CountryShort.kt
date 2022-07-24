@@ -4,5 +4,6 @@ import android.net.Uri
 
 data class CountryShort(
     var name: String? = null,
-    var uri: Uri? = null
+    var uri: Uri? = null,
+    var isAddedToBookmark: Boolean? = null
 )

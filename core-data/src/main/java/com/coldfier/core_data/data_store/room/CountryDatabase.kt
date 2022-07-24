@@ -16,7 +16,7 @@ import com.coldfier.core_utils.room_type_converters.UriTypeConverter
         RoomWeatherByMonth::class, CountryPlugTypeCrossRef::class,
         CountryNeighborCountryCrossRef::class
     ],
-    version = 1
+    version = 3
 )
 @TypeConverters(UriTypeConverter::class)
 internal abstract class CountryDatabase: RoomDatabase() {

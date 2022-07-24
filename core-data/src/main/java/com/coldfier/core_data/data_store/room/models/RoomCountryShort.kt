@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
 internal data class RoomCountryShort(
     @PrimaryKey(autoGenerate = false)
     var name: String,
-    var uri: Uri? = null
+    var uri: Uri? = null,
+    var isBookmark: Boolean = false
 )

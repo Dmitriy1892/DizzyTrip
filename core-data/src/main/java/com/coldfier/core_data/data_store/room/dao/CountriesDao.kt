@@ -2,13 +2,14 @@ package com.coldfier.core_data.data_store.room.dao
 
 import androidx.room.*
 import com.coldfier.core_data.data_store.room.models.*
+import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.core_data.repository.models.PlugType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface CountriesDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCountries(vararg roomCountries: RoomCountry)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -29,7 +30,7 @@ internal interface CountriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNeighborCountries(vararg roomNeighborCountries: RoomNeighborCountry)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCountryShorts(vararg roomCountryShorts: RoomCountryShort)
 
     @Query("SELECT * FROM roomcountryshort ORDER BY name ASC")
@@ -68,6 +69,14 @@ internal interface CountriesDao {
             "JOIN roomneighborcountry ON countryneighborcountrycrossref.countryId = roomneighborcountry.countryId")
     fun getCountriesWithNeighborCountries(): Flow<Map<String, List<RoomNeighborCountry>>>
 
+    @Query("SELECT * FROM roomcountryshort WHERE isBookmark = 1 ORDER BY name ASC")
+    fun getBookmarks(): Flow<List<RoomCountryShort>>
+
+    @Query("UPDATE roomcountryshort SET isBookmark = :isBookmark WHERE name = :countryName")
+    suspend fun updateBookmarkStatus(countryName: String, isBookmark: Boolean)
+
+    @Query("SELECT isBookmark FROM roomcountryshort WHERE name = :countryName")
+    suspend fun countryIsBookmark(countryName: String): Boolean
 
 //    @Transaction
 //    @Query("SELECT * FROM roomcountry WHERE name = :countryName")

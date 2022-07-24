@@ -9,7 +9,11 @@ interface CountriesRepository {
 
     val countryShortsFlow: Flow<List<CountryShort>>
 
+    val bookmarksFlow: Flow<List<CountryShort>>
+
     suspend fun getCountryByUri(uri: Uri): Country
 
     suspend fun searchCountry(countryName: String): Country
+
+    suspend fun updateIsBookmark(countryName: String, isBookmark: Boolean)
 }

@@ -3,16 +3,55 @@ package com.coldfier.dizzytrip.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_utils.di.DepsMap
+import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.core_utils.di.ViewModelFactory
 import com.coldfier.dizzytrip.DizzyTripApplication
 import com.coldfier.dizzytrip.R
 import com.coldfier.dizzytrip.databinding.ActivityMainBinding
 import com.coldfier.dizzytrip.di.subcomponent.MainActivitySubcomponent
+import com.coldfier.feature_bookmarks.BookmarksDeps
+import com.coldfier.feature_countries.CountriesDeps
+import com.coldfier.feature_country_detail.CountryDetailDeps
+import com.coldfier.feature_map.MapDeps
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HasDependencies {
+
+    private val countryDetailDeps = object : CountryDetailDeps{
+        override var country: Country = Country()
+    }
+
+    private val countriesDeps = object : CountriesDeps {
+        override fun navigateToCountryDetailFragment(country: Country) {
+            countryDetailDeps.country = country
+            findNavController(R.id.nav_host_fragment_container)
+                .navigate(R.id.action_countriesListFragment_to_countryDetailFragment)
+        }
+    }
+
+    private val mapDeps = object : MapDeps {}
+
+    private val bookmarksDeps = object : BookmarksDeps {
+        override fun navigateToDetailScreen(country: Country) {
+            countryDetailDeps.country = country
+            findNavController(R.id.nav_host_fragment_container)
+                .navigate(R.id.action_bookmarksFragment_to_countryDetailFragment)
+        }
+    }
+
+    override val depsMap: DepsMap by lazy { mapOf(
+        CountriesDeps::class.java to countriesDeps,
+
+        CountryDetailDeps::class.java to countryDetailDeps,
+
+        MapDeps::class.java to mapDeps,
+
+        BookmarksDeps::class.java to bookmarksDeps) }
 
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
@@ -23,25 +62,28 @@ class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding
         get() = _binding!!
 
-    private val navController: NavController by lazy {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
-        navHostFragment.navController
-    }
-
     private val activityComponent: MainActivitySubcomponent by lazy {
         (applicationContext as DizzyTripApplication).appComponent
             .mainActivityComponent()
-            .navController(navController)
             .build()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activityComponent.inject(this)
+
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        activityComponent.inject(this)
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        val navController = findNavController(R.id.nav_host_fragment_container)
+        navView.setupWithNavController(navController)
     }
 
     override fun onDestroy() {

@@ -4,5 +4,5 @@ import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_utils.di.Dependencies
 
 interface CountryDetailDeps : Dependencies {
-    fun getCountry(): Country
+    var country: Country
 }
