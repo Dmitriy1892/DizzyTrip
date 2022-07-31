@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.8">
-      <module name="DizzyTrip.app" target="11" />
-      <module name="DizzyTrip.core-data" target="11" />
-      <module name="DizzyTrip.core-res" target="11" />
-      <module name="DizzyTrip.core-utils" target="11" />
-      <module name="DizzyTrip.feature-bookmarks" target="11" />
-      <module name="DizzyTrip.feature-bookmarks-sample-app" target="11" />
-      <module name="DizzyTrip.feature-countries" target="11" />
-      <module name="DizzyTrip.feature-countries-sample-app" target="11" />
-      <module name="DizzyTrip.feature-country-detail" target="11" />
-      <module name="DizzyTrip.feature-map" target="11" />
-      <module name="DizzyTrip.feature-map-sample-app" target="11" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11" />
   </component>
 </project>

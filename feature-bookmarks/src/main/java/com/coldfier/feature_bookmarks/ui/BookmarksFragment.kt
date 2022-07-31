@@ -13,12 +13,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.coldfier.core_mvi.changeVisibility
 import com.coldfier.core_utils.di.ViewModelFactory
 import com.coldfier.core_utils.di.findDependencies
 import com.coldfier.core_utils.ui.observeWithLifecycle
 import com.coldfier.feature_bookmarks.BookmarksDeps
 import com.coldfier.feature_bookmarks.databinding.FragmentBookmarksBinding
 import com.coldfier.feature_bookmarks.di.DaggerBookmarksComponent
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksSideEffect
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksState
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksUiEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,8 +65,8 @@ class BookmarksFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.rvBookmarks.adapter = BookmarksAdapter(
-            onItemClick = { viewModel.sendAction(BookmarksScreenAction.OpenCountryFullInfo(it)) },
-            onBookmarkClick = { viewModel.sendAction(BookmarksScreenAction.ChangeIsBookmark(it)) },
+            onItemClick = { viewModel.sendUiEvent(BookmarksUiEvent.OpenCountryFullInfo(it)) },
+            onBookmarkClick = { viewModel.sendUiEvent(BookmarksUiEvent.ChangeIsBookmark(it)) },
             loadImage = { countryName, imageView, progressBar ->
                 viewLifecycleOwner.lifecycleScope.launch {
                     val imageUri = withContext(Dispatchers.IO) {
@@ -99,12 +103,38 @@ class BookmarksFragment : Fragment() {
             }
         )
 
-        viewModel.bookmarksScreenStateFlow.observeWithLifecycle { renderState(it) }
+        viewModel.bookmarksStateFlow.observeWithLifecycle { renderState(it) }
+        viewModel.bookmarksSideEffectFlow.observeWithLifecycle { renderSideEffect(it) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun renderState(state: BookmarksState) {
+
+        binding.pbLoading.changeVisibility(if (state.isShowProgress) View.VISIBLE else View.GONE)
+
+        binding.tvNoData.changeVisibility(
+            if (!state.isShowProgress && state.countryShortList.isEmpty()) View.VISIBLE
+            else View.GONE
+        )
+
+        binding.layoutContent.changeVisibility(
+            if (state.countryShortList.isNotEmpty()) View.VISIBLE else View.GONE
+        )
+
+        (binding.rvBookmarks.adapter as BookmarksAdapter).submitList(state.countryShortList)
+    }
+
+    private fun renderSideEffect(sideEffect: BookmarksSideEffect) {
+        when (sideEffect) {
+            is BookmarksSideEffect.ShowErrorDialog -> showErrorDialog()
+            is BookmarksSideEffect.NavigateToDetailScreen -> {
+                deps.navigateToDetailScreen(sideEffect.country)
+            }
+        }
     }
 
     private fun showImagePlaceholder(
@@ -114,37 +144,11 @@ class BookmarksFragment : Fragment() {
         progressBar.visibility = if (showProgress) View.VISIBLE else View.GONE
     }
 
-    private fun renderState(state: BookmarksScreenState) {
-        binding.pbLoading.visibility = if (state.isShowProgress) View.VISIBLE else View.GONE
-
-        binding.tvNoData.visibility =
-            if (!state.isShowProgress && state.countryShortList.isEmpty()) View.VISIBLE
-            else View.GONE
-
-        binding.layoutContent.visibility =
-            if (!state.isShowProgress && state.countryShortList.isNotEmpty()) View.VISIBLE
-            else View.GONE
-
-        (binding.rvBookmarks.adapter as BookmarksAdapter).submitList(state.countryShortList)
-
-        state.errorDialogMessage?.let {
-            showErrorDialog()
-        }
-
-        if (state.navigationState is NavigationState.CountryDetailScreen) {
-            deps.navigateToDetailScreen(state.navigationState.country)
-            viewModel.sendAction(BookmarksScreenAction.NavigationComplete)
-        }
-    }
-
     private fun showErrorDialog() {
         AlertDialog.Builder(requireContext())
             .setMessage(com.coldfier.core_res.R.string.error_country_loading)
             .setCancelable(false)
-            .setPositiveButton(com.coldfier.core_res.R.string.error_dialog_button_ok) { dialog, _ ->
-                dialog.dismiss()
-                viewModel.sendAction(BookmarksScreenAction.ErrorDialogClosed)
-            }
+            .setPositiveButton(com.coldfier.core_res.R.string.error_dialog_button_ok) { dialog, _ -> dialog.dismiss() }
             .show()
     }
 }

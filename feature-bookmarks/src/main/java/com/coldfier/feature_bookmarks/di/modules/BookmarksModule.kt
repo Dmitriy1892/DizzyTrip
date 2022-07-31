@@ -6,6 +6,7 @@ import com.coldfier.core_data.CoreDataDeps
 import com.coldfier.core_data.repository.repositories.CountriesRepository
 import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
 import com.coldfier.feature_bookmarks.di.BookmarksScope
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksState
 import dagger.Module
 import dagger.Provides
 
@@ -27,4 +28,9 @@ internal class BookmarksModule {
     @Provides
     fun providePixabayImagesRepository(coreDataDeps: CoreDataDeps): PixabayImagesRepository =
         CoreDataApi.getInstance(coreDataDeps).pixabayImagesRepository
+
+    @Provides
+    fun provideInitialBookmarkState(): BookmarksState {
+        return BookmarksState()
+    }
 }
