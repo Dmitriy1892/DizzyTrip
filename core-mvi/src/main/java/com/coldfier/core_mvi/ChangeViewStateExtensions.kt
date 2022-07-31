@@ -33,7 +33,10 @@ fun View.changeVisibility(@Visibility newVisibility: Int) {
  *  For [EditText], [Button] and etc. views which extend [TextView]
  */
 fun TextView.changeText(text: String) {
-    if (this.text.toString() == text) return else this.text = text
+    if (this.text.toString() == text)
+        return
+    else
+        this.text = text
 }
 
 /**
@@ -41,6 +44,13 @@ fun TextView.changeText(text: String) {
  */
 fun TextView.changeTextColor(@ColorInt newColor: Int) {
     if (this.currentTextColor == newColor) return else this.setTextColor(newColor)
+}
+
+/**
+ *  For [EditText], [Button] and etc. views which extend [TextView]
+ */
+fun TextView.changeHintTextColor(@ColorInt newColor: Int) {
+    if (this.currentHintTextColor == newColor) return else this.setHintTextColor(newColor)
 }
 
 /**

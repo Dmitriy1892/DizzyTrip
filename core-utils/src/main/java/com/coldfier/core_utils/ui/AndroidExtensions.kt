@@ -56,7 +56,7 @@ fun EditText.setAfterTextChangedListenerWithDebounce(
         }
         addTextChangedListener(listener)
         awaitClose { removeTextChangedListener(listener) }
-    }.onStart { emit(text) }
+    }
 
     return flow
         .onEach { actionBeforeDebounce?.invoke() }

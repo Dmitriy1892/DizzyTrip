@@ -6,6 +6,7 @@ import com.coldfier.core_data.CoreDataDeps
 import com.coldfier.core_data.repository.repositories.CountriesRepository
 import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
 import com.coldfier.feature_countries.di.CountriesScope
+import com.coldfier.feature_countries.ui.mvi.CountriesState
 import dagger.Module
 import dagger.Provides
 
@@ -27,4 +28,14 @@ internal class CountriesModule {
     @Provides
     fun providePixabayImagesRepository(coreDataDeps: CoreDataDeps): PixabayImagesRepository =
         CoreDataApi.getInstance(coreDataDeps).pixabayImagesRepository
+
+    @Provides
+    fun provideInitialCountriesState(): CountriesState = CountriesState(
+        isShowLoadingSkeleton = false,
+        isShowProgress = false,
+        userAvatar = null,
+        searchRequest = "",
+        searchResult = null,
+        countryShortList = emptyList()
+    )
 }
