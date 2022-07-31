@@ -1,6 +1,8 @@
-package com.coldfier.feature_bookmarks.ui.mvi
+package com.coldfier.feature_bookmarks.ui.mvi.processors
 
 import com.coldfier.core_mvi.Reducer
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksAction
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksState
 import javax.inject.Inject
 
 internal class BookmarksReducer @Inject constructor(): Reducer<BookmarksState, BookmarksAction> {

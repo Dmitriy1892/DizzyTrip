@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.coldfier.core_data.repository.models.Advice
 import com.coldfier.core_data.repository.models.AdviceType
+import com.coldfier.core_utils.di.ViewModelFactory
 import com.coldfier.core_utils.di.findDependencies
 import com.coldfier.core_utils.ui.observeWithLifecycle
 import com.coldfier.feature_country_detail.CountryDetailDeps
@@ -23,6 +24,8 @@ import com.coldfier.feature_country_detail.R
 import com.coldfier.feature_country_detail.databinding.FragmentCountryDetailBinding
 import com.coldfier.feature_country_detail.di.CountryDetailComponent
 import com.coldfier.feature_country_detail.di.DaggerCountryDetailComponent
+import com.coldfier.feature_country_detail.ui.mvi.CountryState
+import com.coldfier.feature_country_detail.ui.mvi.CountryUiEvent
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import org.osmdroid.config.Configuration
@@ -34,15 +37,12 @@ import javax.inject.Inject
 class CountryDetailFragment : Fragment() {
 
     @Inject
-    internal lateinit var viewModelFactory:
-            CountryDetailViewModel.CountryDetailViewModelFactory.VMAssistedFactory
+    internal lateinit var viewModelFactory: ViewModelFactory
 
     @Inject
     internal lateinit var deps: CountryDetailDeps
 
-    private val viewModel: CountryDetailViewModel by viewModels {
-        viewModelFactory.create(deps.country)
-    }
+    private val viewModel: CountryDetailViewModel by viewModels { viewModelFactory }
 
     private var _binding: FragmentCountryDetailBinding? = null
     private val binding: FragmentCountryDetailBinding
@@ -52,18 +52,16 @@ class CountryDetailFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
         val deniedPermissions = result.filterValues { isGranted -> !isGranted }.keys
-        val action = if (deniedPermissions.isEmpty()) {
-            CountryDetailScreenAction.GrantedPermissions
+        val event = if (deniedPermissions.isEmpty()) {
+            CountryUiEvent.GrantedPermissions
         } else {
-            CountryDetailScreenAction.DeniedPermissions(deniedPermissions)
+            CountryUiEvent.DeniedPermissions(deniedPermissions)
         }
-        viewModel.sendAction(action)
+        viewModel.sendUiEvent(event)
     }
 
     private val backPressedDispatcher = OnBackPressedDispatcher().apply {
-        addCallback {
-            findNavController().popBackStack()
-        }
+        addCallback { findNavController().popBackStack() }
     }
 
     private var snackbar: Snackbar? = null
@@ -94,20 +92,18 @@ class CountryDetailFragment : Fragment() {
 
         binding.rvVaccination.adapter = CountryVaccinationAdapter()
 
-        binding.buttonBack.setOnClickListener {
-            backPressedDispatcher.onBackPressed()
-        }
+        binding.buttonBack.setOnClickListener { backPressedDispatcher.onBackPressed() }
 
         binding.buttonBookmark.setOnClickListener {
-            viewModel.sendAction(CountryDetailScreenAction.ChangeIsBookmark)
+            viewModel.sendUiEvent(CountryUiEvent.ChangeIsBookmark)
         }
 
-        viewModel.screenStateFlow.observeWithLifecycle {
+        viewModel.countryStateFlow.observeWithLifecycle {
             renderState(it)
         }
     }
 
-    private fun renderState(screenState: CountryDetailScreenState) {
+    private fun renderState(screenState: CountryState) {
         with(binding) {
 
             val bookmarkRes = if (screenState.country.isAddedToBookmark == true) {
@@ -229,7 +225,10 @@ class CountryDetailFragment : Fragment() {
         val marker = Marker(binding.mapView).apply {
             position = point
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            icon = ContextCompat.getDrawable(requireContext(), com.coldfier.core_res.R.drawable.ic_location_marker_filled)
+            icon = ContextCompat.getDrawable(
+                requireContext(),
+                com.coldfier.core_res.R.drawable.ic_location_marker_filled
+            )
         }
 
         binding.mapView.overlays.add(marker)
@@ -256,5 +255,4 @@ class CountryDetailFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

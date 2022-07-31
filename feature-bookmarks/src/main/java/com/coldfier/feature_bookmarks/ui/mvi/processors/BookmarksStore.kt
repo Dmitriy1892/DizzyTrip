@@ -1,7 +1,11 @@
-package com.coldfier.feature_bookmarks.ui.mvi
+package com.coldfier.feature_bookmarks.ui.mvi.processors
 
 import android.net.Uri
 import com.coldfier.core_mvi.store.FullStore
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksAction
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksSideEffect
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksState
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksUiEvent
 import com.coldfier.feature_bookmarks.use_cases.BookmarksMiddleware
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

@@ -1,6 +1,9 @@
-package com.coldfier.feature_bookmarks.ui.mvi
+package com.coldfier.feature_bookmarks.ui.mvi.processors
 
 import com.coldfier.core_mvi.SideEffectProducer
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksAction
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksSideEffect
+import com.coldfier.feature_bookmarks.ui.mvi.BookmarksState
 import javax.inject.Inject
 
 internal class BookmarksSideEffectProducer @Inject constructor(

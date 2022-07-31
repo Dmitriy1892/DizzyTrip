@@ -18,4 +18,9 @@ internal class CountriesListViewModel @Inject constructor(
     suspend fun loadImageForCountry(countryName: String): Uri? {
         return countriesStore.loadImageByCountryName(countryName)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        countriesStore.onCleared()
+    }
 }

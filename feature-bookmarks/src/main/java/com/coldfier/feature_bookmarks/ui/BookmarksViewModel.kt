@@ -2,7 +2,7 @@ package com.coldfier.feature_bookmarks.ui
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.coldfier.feature_bookmarks.ui.mvi.BookmarksStore
+import com.coldfier.feature_bookmarks.ui.mvi.processors.BookmarksStore
 import com.coldfier.feature_bookmarks.ui.mvi.BookmarksUiEvent
 import javax.inject.Inject
 
