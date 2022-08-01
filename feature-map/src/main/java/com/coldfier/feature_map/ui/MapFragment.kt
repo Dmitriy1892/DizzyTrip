@@ -21,11 +21,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_mvi.changeVisibility
 import com.coldfier.core_res.R
 import com.coldfier.core_utils.di.DepsMap
 import com.coldfier.core_utils.di.HasDependencies
@@ -35,10 +37,18 @@ import com.coldfier.core_utils.ui.observeWithLifecycle
 import com.coldfier.feature_map.databinding.FragmentMapBinding
 import com.coldfier.feature_map.di.DaggerMapComponent
 import com.coldfier.feature_map.di.MapComponent
+import com.coldfier.feature_map.ui.mvi.MapSideEffect
+import com.coldfier.feature_map.ui.mvi.MapState
+import com.coldfier.feature_map.ui.mvi.MapUiEvent
 import com.coldfier.feature_search_country.SearchCountryDeps
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.osmdroid.config.Configuration
@@ -48,24 +58,15 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
+import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class MapFragment : Fragment(), HasDependencies {
 
     private val searchCountryDeps = object : SearchCountryDeps {
         override fun foundCountryClicked(country: Country) {
-            val index = viewModel.mapScreenState.value.countryList.indexOfFirst {
-                it.name == country.name
-            }
-
-            if (index != -1) {
-                binding.rvCountries.scrollToPosition(index-1)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    binding.rvCountries.smoothScrollToPosition(index)
-                }, 200)
-            }
-
-            hideSoftInputKeyboard()
+            viewModel.sendUiEvent(MapUiEvent.FoundCountryClicked(country))
         }
     }
 
@@ -86,15 +87,45 @@ class MapFragment : Fragment(), HasDependencies {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
         val deniedPermissions = result.filterValues { isGranted -> !isGranted }.keys
-        val action = if (deniedPermissions.isEmpty()) {
-            MapScreenAction.PermissionsGranted
+        val event = if (deniedPermissions.isEmpty()) {
+            MapUiEvent.PermissionsGranted
         } else {
-            MapScreenAction.PermissionsDenied(deniedPermissions)
+            MapUiEvent.PermissionsDenied(deniedPermissions)
         }
-        viewModel.sendAction(action)
+        viewModel.sendUiEvent(event)
     }
 
     private var snackbar: Snackbar? = null
+
+    @OptIn(FlowPreview::class)
+    private val snapScrollDebounceFlow = callbackFlow {
+        val helper = PagerSnapHelper()
+        try {
+            helper.attachToRecyclerView(binding.rvCountries)
+        } catch (e: Exception) {
+            Timber.tag(MapFragment::class.simpleName.toString()).e(e)
+        }
+
+
+        val callback = SnapOnScrollListener(
+            helper, SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
+            object : OnSnapPositionChangeListener {
+                override fun onSnapPositionChange(position: Int) {
+                    val countryName = adapter?.currentList?.getOrNull(position)
+                    countryName?.let { country ->
+                        trySend(MapUiEvent.CountryChosen(country))
+                    }
+                }
+            }
+        )
+        snapOnScrollListener = callback
+        binding.rvCountries.addOnScrollListener(callback)
+        awaitClose { binding.rvCountries.clearOnScrollListeners() }
+    }
+        .distinctUntilChanged()
+        .debounce(500)
+
+    private var snapOnScrollListener: SnapOnScrollListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -116,6 +147,8 @@ class MapFragment : Fragment(), HasDependencies {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mapPermissionsCallback.launch(viewModel.mapStateFlow.value.deniedPermissions.toTypedArray())
 
         adapter = MapCountriesAdapter { countryName, imageView, progressBar ->
             viewLifecycleOwner.lifecycleScope.launch {
@@ -153,22 +186,15 @@ class MapFragment : Fragment(), HasDependencies {
         }
 
         binding.rvCountries.adapter = adapter
-        val helper = PagerSnapHelper()
-        helper.attachToRecyclerView(binding.rvCountries)
 
-        val snapScrollListener = SnapOnScrollListener(
-            helper, SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
-            object : OnSnapPositionChangeListener {
-                override fun onSnapPositionChange(position: Int) {
-                    val countryName = adapter?.currentList?.getOrNull(position)
-                    countryName?.let { country ->
-                        viewModel.sendAction(MapScreenAction.CountryChosen(country))
-                    }
-                }
-            }
-        )
+        snapScrollDebounceFlow.observeWithLifecycle { viewModel.sendUiEvent(it) }
+        viewModel.mapStateFlow.observeWithLifecycle(::renderState)
+        viewModel.mapSideEffectFlow.observeWithLifecycle(::renderSideEffect)
+    }
 
-        binding.rvCountries.addOnScrollListener(snapScrollListener)
+    override fun onResume() {
+        super.onResume()
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         binding.rvCountries.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
@@ -182,15 +208,6 @@ class MapFragment : Fragment(), HasDependencies {
                 view.layoutParams.width = binding.root.width * 8 / 10
             }
         })
-
-        viewModel.mapScreenState.observeWithLifecycle {
-            renderState(it)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     override fun onPause() {
@@ -204,28 +221,21 @@ class MapFragment : Fragment(), HasDependencies {
         adapter = null
     }
 
-    private fun renderState(state: MapScreenState) {
-        binding.pbLoading.visibility = if (state.isShowLoading) View.VISIBLE else View.GONE
-        binding.tvNoData.visibility = if (state.isShowNoDataLoaded) View.VISIBLE else View.GONE
+    private fun renderState(state: MapState) {
+
+        binding.pbLoading.changeVisibility(if (state.isShowLoading) View.VISIBLE else View.GONE)
+        binding.tvNoData.changeVisibility(if (state.isShowNoDataLoaded) View.VISIBLE else View.GONE)
         adapter?.submitList(state.countryList)
 
-        when {
-            checkMultiplePermissions(state.deniedPermissions).isNotEmpty() -> {
-                showErrorPermissionsSnackbar(checkMultiplePermissions(state.deniedPermissions))
-            }
 
-            state.isNeedToInitMap -> {
-                initMap()
-                if (state.countryList.isEmpty()) getMyLocation()
-            }
+        if (checkMultiplePermissions(state.deniedPermissions).isNotEmpty())  {
+            showErrorPermissionsSnackbar(checkMultiplePermissions(state.deniedPermissions))
         }
-
-        if (state.errorDialogMessage != null) showErrorDialog()
 
         binding.mapView.overlays.clear()
         getMyLocation()
 
-        if (state.chosenCountry != null && !state.isShowCountrySearchLoading) {
+        if (state.chosenCountry != null && !state.isCountrySearchLoading) {
             val lat = state.chosenCountry.lat
             val lon = state.chosenCountry.lon
             val zoomLevel = state.chosenCountry.zoom ?: 10.0
@@ -233,6 +243,53 @@ class MapFragment : Fragment(), HasDependencies {
 
             if (lat != null && lon != null) {
                 setLocation(GeoPoint(lat, lon), zoomLevel, infoText, false)
+            }
+        }
+
+        if (state.chosenCountry != null) {
+            val index = viewModel.mapStateFlow.value.countryList.indexOfFirst {
+                it.name == state.chosenCountry.name
+            }
+
+            if (index != -1) {
+                val recyclerPosition = (binding.rvCountries.layoutManager as LinearLayoutManager)
+                    .findFirstVisibleItemPosition()
+
+                if ((recyclerPosition - index).absoluteValue > 5 ) {
+                    binding.rvCountries.clearOnScrollListeners()
+                    binding.rvCountries.scrollToPosition(index - 1)
+
+                    binding.rvCountries.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                            super.onScrollStateChanged(recyclerView, newState)
+                            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                                binding.rvCountries.clearOnScrollListeners()
+                                snapOnScrollListener?.let {
+                                    binding.rvCountries.addOnScrollListener(it)
+                                }
+
+                            }
+                        }
+                    })
+                }
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding.rvCountries.smoothScrollToPosition(index)
+                }, 200)
+            }
+
+            hideSoftInputKeyboard()
+        }
+    }
+
+    private fun renderSideEffect(effect: MapSideEffect) {
+        when (effect) {
+
+            is MapSideEffect.ShowErrorDialog -> showErrorDialog()
+
+            is MapSideEffect.InitMap -> {
+                initMap()
+                if (viewModel.mapStateFlow.value.countryList.isEmpty()) getMyLocation()
             }
         }
     }
@@ -246,8 +303,6 @@ class MapFragment : Fragment(), HasDependencies {
         binding.mapView.setMultiTouchControls(true)
         binding.mapView.tileProvider.createTileCache()
         binding.mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-
-        viewModel.sendAction(MapScreenAction.MapInitialized)
     }
 
     private fun getMyLocation() {
@@ -294,7 +349,7 @@ class MapFragment : Fragment(), HasDependencies {
 
         binding.mapView.overlays.add(mapMarker)
 
-        if (!isMyLocation || viewModel.mapScreenState.value.chosenCountry == null) {
+        if (!isMyLocation || viewModel.mapStateFlow.value.chosenCountry == null) {
             val mapController = binding.mapView.controller
             val calculatedZoom = if (zoomLevel > 10.0) 10.0 else zoomLevel
             mapController.animateTo(geoPoint, calculatedZoom, 1000)
@@ -323,7 +378,6 @@ class MapFragment : Fragment(), HasDependencies {
             .setCancelable(false)
             .setPositiveButton(R.string.error_dialog_button_ok) { dialog, _ ->
                 dialog.dismiss()
-                viewModel.sendAction(MapScreenAction.ErrorDialogClosed)
             }
             .show()
     }
