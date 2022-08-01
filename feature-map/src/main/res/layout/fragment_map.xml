@@ -18,66 +18,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/et_search"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/search_container"
         android:layout_width="0dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:paddingStart="16dp"
-        android:elevation="7dp"
-        android:background="@drawable/bg_search_field"
-        android:drawableStart="@drawable/ic_search"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/sofia_pro_regular"
-        android:hint="@string/iv_search_hint"
-        android:textColorHint="@color/text_hint_color"
-        android:textColor="@color/title_text_color"
-        android:textSize="18sp"
-        android:letterSpacing="0.0"
-        android:gravity="start|center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:name="com.coldfier.feature_search_country.ui.SearchCountryFragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_search_result"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:background="@color/white"
-        android:text="@string/no_search_result_text"
-        android:textSize="18sp"
-        android:elevation="5dp"
-        android:visibility="invisible"
-        android:lines="1"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        app:layout_constraintEnd_toEndOf="@+id/et_search"
-        app:layout_constraintStart_toStartOf="@+id/et_search"
-        app:layout_constraintTop_toBottomOf="@+id/et_search"
-        tools:text="no result no result no result no result no result no result no result no result no result "
-        tools:visibility="visible"
-        style="@style/regularText" />
-
-    <ProgressBar
-        android:id="@+id/pb_search"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:elevation="6dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_search_result"
-        app:layout_constraintStart_toStartOf="@+id/tv_search_result"
-        app:layout_constraintTop_toTopOf="@+id/tv_search_result" />
 
     <FrameLayout
         android:id="@+id/layout_content"

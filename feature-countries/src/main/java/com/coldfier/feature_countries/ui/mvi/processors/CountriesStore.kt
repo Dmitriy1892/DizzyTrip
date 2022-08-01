@@ -38,13 +38,9 @@ internal class CountriesStore @Inject constructor(
 
     override fun mapEventToAction(event: CountriesUiEvent): CountriesAction? {
         return when (event) {
+
             is CountriesUiEvent.OpenSearchedCountry ->
                 CountriesAction.NavigateToDetailScreen(event.country)
-
-            is CountriesUiEvent.ShowSearchLoadingState ->
-                CountriesAction.ShowSearchLoadingState(event.searchRequest)
-
-            is CountriesUiEvent.SetEmptySearchRequest -> CountriesAction.SetEmptyRequest
 
             else -> null
         }

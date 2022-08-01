@@ -55,8 +55,12 @@ internal class CountriesRepositoryImpl @Inject constructor(
             val roomCountry = netCountry.convertToRoomCountryFullModel()
             countriesRoomDataSource.saveRoomCountryFullModel(roomCountry)
 
-            val isBookmark =
+            val isBookmark = try {
                 countriesRoomDataSource.countryIsBookmark(roomCountry.name ?: "")
+            } catch (e: Exception) {
+                false
+            }
+
             roomCountry.convertToCountry().apply { isAddedToBookmark = isBookmark }
         }
     }

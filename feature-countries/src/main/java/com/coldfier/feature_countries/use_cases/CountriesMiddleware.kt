@@ -20,26 +20,8 @@ internal class CountriesMiddleware @Inject constructor(
 
     val countryShortsFlow = countriesRepository.countryShortsFlow
 
-    val searchCountryFlow: Flow<CountriesAction>? = null
-
     override fun invoke(state: CountriesState, event: CountriesUiEvent): Flow<CountriesAction>? {
         return when (event) {
-            is CountriesUiEvent.SearchCountryByName -> {
-                flow {
-                    if (event.countryName.isNotBlank()) {
-                        emit(CountriesAction.SearchLoading)
-
-                        try {
-                            val result = searchCountry(state, event.countryName)
-                            emit(CountriesAction.SearchResult(result))
-                        } catch (e: Throwable) {
-                            emit(CountriesAction.SearchError(e))
-                        }
-                    } else {
-                        emit(CountriesAction.SearchResult(null))
-                    }
-                }
-            }
 
             is CountriesUiEvent.OpenCountryFullInfo -> {
                 flow {
@@ -75,27 +57,6 @@ internal class CountriesMiddleware @Inject constructor(
     suspend fun searchImageByCountryName(countryName: String): Uri? {
         return pixabayImagesRepository.searchImageByCountryName(countryName)
     }
-
-    private suspend fun searchCountry(state: CountriesState, countryName: String): Country? {
-        try {
-            if (countryName.isBlank()) return null
-
-            val country = state.countryShortList.find {
-                it.name!!.lowercase().contains(countryName.lowercase())
-            }
-
-            return if (country == null) {
-                searchCountryByName(countryName)
-            } else {
-                getCountryByUri(country.uri!!)
-            }
-        } catch (e: Throwable) {
-            return null
-        }
-    }
-
-    private suspend fun searchCountryByName(countryName: String): Country =
-        countriesRepository.searchCountry(countryName)
 
     private suspend fun getCountryByUri(uri: Uri): Country =  countriesRepository.getCountryByUri(uri)
 

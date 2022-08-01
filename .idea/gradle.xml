@@ -22,6 +22,8 @@
             <option value="$PROJECT_DIR$/feature-country-detail" />
             <option value="$PROJECT_DIR$/feature-map" />
             <option value="$PROJECT_DIR$/feature-map-sample-app" />
+            <option value="$PROJECT_DIR$/feature-search-country" />
+            <option value="$PROJECT_DIR$/feature-search-country-sample-app" />
           </set>
         </option>
       </GradleProjectSettings>

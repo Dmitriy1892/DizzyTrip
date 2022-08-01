@@ -3,13 +3,9 @@ package com.coldfier.feature_countries.ui
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
@@ -19,12 +15,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.coldfier.core_mvi.*
+import com.coldfier.core_data.repository.models.Country
+import com.coldfier.core_mvi.changeImageDrawable
+import com.coldfier.core_mvi.changeTextColor
+import com.coldfier.core_mvi.changeVisibility
 import com.coldfier.core_res.R
+import com.coldfier.core_utils.di.DepsMap
+import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.core_utils.di.ViewModelFactory
 import com.coldfier.core_utils.di.findDependencies
 import com.coldfier.core_utils.ui.observeWithLifecycle
-import com.coldfier.core_utils.ui.setAfterTextChangedListenerWithDebounce
 import com.coldfier.feature_countries.CountriesDeps
 import com.coldfier.feature_countries.databinding.FragmentCountriesListBinding
 import com.coldfier.feature_countries.di.CountriesComponent
@@ -32,14 +32,21 @@ import com.coldfier.feature_countries.di.DaggerCountriesComponent
 import com.coldfier.feature_countries.ui.mvi.CountriesSideEffect
 import com.coldfier.feature_countries.ui.mvi.CountriesState
 import com.coldfier.feature_countries.ui.mvi.CountriesUiEvent
-import com.coldfier.feature_countries.ui.mvi.SearchResult
+import com.coldfier.feature_search_country.SearchCountryDeps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
-class CountriesListFragment : Fragment() {
+class CountriesListFragment : Fragment(), HasDependencies {
+
+    private val searchCountryDeps = object : SearchCountryDeps {
+        override fun foundCountryClicked(country: Country) {
+            viewModel.sendUiEvent(CountriesUiEvent.OpenSearchedCountry(country))
+        }
+    }
+
+    override val depsMap: DepsMap = mapOf(SearchCountryDeps::class.java to searchCountryDeps)
 
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
@@ -133,54 +140,6 @@ class CountriesListFragment : Fragment() {
         binding.cvUserAvatarContainer.setOnClickListener {
             viewModel.sendUiEvent(CountriesUiEvent.OpenUserProfile)
         }
-
-        binding.etSearch.setAfterTextChangedListenerWithDebounce(
-            debounceMillis = 700L,
-            coroutineScope = viewLifecycleOwner.lifecycleScope,
-            actionBeforeDebounce = {
-                if (binding.etSearch.text?.isNotBlank() == true) {
-                    viewModel.sendUiEvent(
-                        CountriesUiEvent.ShowSearchLoadingState(
-                            binding.etSearch.text?.toString() ?: ""
-                        )
-                    )
-                } else {
-                    viewModel.sendUiEvent(CountriesUiEvent.SetEmptySearchRequest)
-                }
-            }
-        ) {
-            viewModel.sendUiEvent(CountriesUiEvent.SearchCountryByName(it))
-        }
-
-        binding.etSearch.onFocusChangeListener =
-            View.OnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
-
-                    val imm: InputMethodManager = requireActivity()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(
-                        requireActivity().findViewById<View>(android.R.id.content).windowToken,
-                        0
-                    )
-                } else if (
-                    binding.tvSearchResult.visibility == View.INVISIBLE
-                    && binding.tvSearchResult.text.isNotBlank()
-                    && binding.tvSearchResult.text != getString(R.string.no_search_result_text)
-                ) {
-                    showSearchResultView()
-                }
-            }
-
-        binding.tvSearchResult.setOnClickListener {
-            viewModel.countriesStateFlow.value.searchResult?.let { searchResult ->
-                if (searchResult is SearchResult.Complete) {
-                    viewModel.sendUiEvent(
-                        CountriesUiEvent.OpenSearchedCountry(searchResult.searchResult)
-                    )
-                }
-            }
-        }
     }
 
     private fun initObservers() {
@@ -216,10 +175,6 @@ class CountriesListFragment : Fragment() {
 
             emptyAvatar?.let { binding.ivUserAvatar.changeImageDrawable(it) }
         }
-
-        binding.etSearch.changeText(countriesState.searchRequest)
-
-        updateSearchResultView(countriesState.searchResult)
     }
 
     private fun renderSideEffect(sideEffect: CountriesSideEffect) {
@@ -233,37 +188,27 @@ class CountriesListFragment : Fragment() {
     }
 
     private fun showLoadingState() {
-        if (binding.tvSearchResult.visibility == View.VISIBLE)  hideSearchResultView()
-
         countriesAdapter?.showLoadingSkeletons()
 
         with(binding) {
+            skeletonPlaceholder.changeVisibility(View.VISIBLE)
+            searchContainer.changeVisibility(View.INVISIBLE)
             tvHead.changeTextColor(0xffffff)
             ivUserAvatar.changeVisibility(View.GONE)
-            etSearch.changeHintTextColor(0xffffff)
-            etSearch.changeTextColor(0xffffff)
-            etSearch.setCompoundDrawablesWithIntrinsicBounds(
-                null, null, null, null
-            )
             tvTitle.changeTextColor(0xffffff)
-            showSkeletons(tvHead, cvUserAvatarContainer, etSearch, tvTitle)
+            showSkeletons(tvHead, cvUserAvatarContainer, skeletonPlaceholder, tvTitle)
         }
     }
 
     private fun hideLoadingState() {
         with(binding) {
+            skeletonPlaceholder.changeVisibility(View.GONE)
+            searchContainer.changeVisibility(View.VISIBLE)
             val textColor = ContextCompat.getColor(requireContext(), R.color.title_text_color)
-            val hintColor = ContextCompat.getColor(requireContext(), R.color.text_hint_color)
-            val searchDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_search)
             tvHead.changeTextColor(textColor)
             ivUserAvatar.changeVisibility(View.VISIBLE)
-            etSearch.changeHintTextColor(hintColor)
-            etSearch.changeTextColor(textColor)
-            etSearch.setCompoundDrawablesWithIntrinsicBounds(
-                searchDrawable, null, null, null
-            )
             tvTitle.changeTextColor(textColor)
-            hideSkeletons(tvHead, cvUserAvatarContainer, etSearch, tvTitle)
+            hideSkeletons(tvHead, cvUserAvatarContainer, skeletonPlaceholder, tvTitle)
         }
     }
 
@@ -284,83 +229,12 @@ class CountriesListFragment : Fragment() {
         views.forEach { view -> view.foreground = null }
     }
 
-    private fun updateSearchResultView(searchResult: SearchResult?) {
-        when (searchResult) {
-            is SearchResult.Loading -> {
-                binding.tvSearchResult.changeText("")
-                if (binding.tvSearchResult.visibility == View.INVISIBLE) {
-                    showSearchResultView()
-
-                    try {
-                        Handler(Looper.getMainLooper()).postDelayed(
-                            { binding.pbSearch.changeVisibility(View.VISIBLE) },
-                            500
-                        )
-                    } catch (e: Exception) {
-                        Timber.tag(CountriesListFragment::class.simpleName ?: "").e(e)
-                    }
-                } else {
-                    binding.pbSearch.changeVisibility(View.VISIBLE)
-                }
-            }
-
-            is SearchResult.Complete -> {
-                binding.pbSearch.changeVisibility(View.GONE)
-                binding.tvSearchResult.changeText(
-                    searchResult.searchResult.name ?: getString(R.string.no_search_result_text)
-                )
-                if (binding.tvSearchResult.visibility == View.INVISIBLE) showSearchResultView()
-            }
-
-            is SearchResult.Error -> {
-                binding.pbSearch.changeVisibility(View.GONE)
-                binding.tvSearchResult.changeText(getString(R.string.no_search_result_text))
-                if (binding.tvSearchResult.visibility == View.INVISIBLE) showSearchResultView()
-            }
-
-            null -> {
-                binding.pbSearch.changeVisibility(View.GONE)
-                binding.tvSearchResult.changeText(getString(R.string.no_search_result_text))
-                if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
-            }
-        }
-    }
-
     private fun showErrorDialog() {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.error_country_loading)
             .setCancelable(false)
             .setPositiveButton(R.string.error_dialog_button_ok) { dialog, _ -> dialog.dismiss() }
             .show()
-    }
-
-    private fun showSearchResultView() {
-        binding.tvSearchResult.changeVisibility(View.VISIBLE)
-
-        val animation = TranslateAnimation(
-            0f,
-            0f,
-            -7f - binding.tvSearchResult.height.toFloat(),
-            0f
-        )
-
-        animation.duration = 500
-        animation.fillAfter = true
-        binding.tvSearchResult.startAnimation(animation)
-    }
-
-    private fun hideSearchResultView() {
-        val animation = TranslateAnimation(
-            0f,
-            0f,
-            0f,
-            -7f - binding.tvSearchResult.height.toFloat()
-        )
-
-        animation.duration = 500
-        animation.fillAfter = true
-        binding.tvSearchResult.startAnimation(animation)
-        binding.tvSearchResult.changeVisibility(View.INVISIBLE)
     }
 
     private fun showImagePlaceholder(

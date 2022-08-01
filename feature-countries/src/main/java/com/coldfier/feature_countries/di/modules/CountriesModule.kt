@@ -34,8 +34,6 @@ internal class CountriesModule {
         isShowLoadingSkeleton = false,
         isShowProgress = false,
         userAvatar = null,
-        searchRequest = "",
-        searchResult = null,
         countryShortList = emptyList()
     )
 }

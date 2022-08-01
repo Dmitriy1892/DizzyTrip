@@ -99,56 +99,6 @@ internal class MapViewModel @Inject constructor(
                         it.copy(errorDialogMessage = null)
                     }
                 }
-
-                is MapScreenAction.ShowSearchLoadingState -> {
-                    _mapScreenStateFlow.update {
-                        it.copy(
-                            searchRequest = action.searchRequest,
-                            searchResult = SearchResult.Loading
-                        )
-                    }
-                }
-
-                is MapScreenAction.SetEmptySearchRequest -> {
-                    _mapScreenStateFlow.update { it.copy(searchRequest = "") }
-                }
-
-                is MapScreenAction.SearchCountryByName -> {
-                    searchCountry(action.countryName)
-                }
-            }
-        }
-    }
-
-    private fun searchCountry(countryName: String) {
-        launchInIOCoroutine {
-            try {
-                if (countryName.isNotBlank()) {
-                    _mapScreenStateFlow.update {
-                        it.copy(
-                            searchRequest = countryName,
-                            searchResult = SearchResult.Loading
-                        )
-                    }
-
-                    val country = _mapScreenStateFlow.value.countryList.find {
-                        it.name?.lowercase()!!.contains(countryName.lowercase())
-                    }
-
-                    val result = mapUseCase.getCountryByUri(country!!.uri!!)
-
-                    _mapScreenStateFlow.update {
-                        it.copy(
-                            searchResult = SearchResult.Complete(result)
-                        )
-                    }
-                } else {
-                    _mapScreenStateFlow.update { it.copy(searchResult = null) }
-                }
-            } catch (e: Exception) {
-                _mapScreenStateFlow.update {
-                    it.copy(searchResult = SearchResult.Error)
-                }
             }
         }
     }
@@ -171,16 +121,7 @@ internal data class MapScreenState(
     ),
     val isNeedToInitMap: Boolean = true,
     val errorDialogMessage: String? = null,
-
-    val searchRequest: String = "",
-    val searchResult: SearchResult? = null
 )
-
-internal sealed interface SearchResult {
-    object Loading : SearchResult
-    class Complete(val searchResult: Country) : SearchResult
-    object Error : SearchResult
-}
 
 internal sealed interface MapScreenAction {
     object PermissionsGranted : MapScreenAction
@@ -188,8 +129,4 @@ internal sealed interface MapScreenAction {
     object MapInitialized : MapScreenAction
     class CountryChosen(val country: CountryShort) : MapScreenAction
     object ErrorDialogClosed : MapScreenAction
-
-    class ShowSearchLoadingState(val searchRequest: String) : MapScreenAction
-    object SetEmptySearchRequest : MapScreenAction
-    class SearchCountryByName(val countryName: String) : MapScreenAction
 }

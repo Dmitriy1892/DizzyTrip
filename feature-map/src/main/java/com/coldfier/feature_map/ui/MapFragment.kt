@@ -11,7 +11,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -26,14 +25,17 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_res.R
+import com.coldfier.core_utils.di.DepsMap
+import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.core_utils.di.ViewModelFactory
 import com.coldfier.core_utils.di.findDependencies
 import com.coldfier.core_utils.ui.observeWithLifecycle
-import com.coldfier.core_utils.ui.setAfterTextChangedListenerWithDebounce
 import com.coldfier.feature_map.databinding.FragmentMapBinding
 import com.coldfier.feature_map.di.DaggerMapComponent
 import com.coldfier.feature_map.di.MapComponent
+import com.coldfier.feature_search_country.SearchCountryDeps
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -46,10 +48,28 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
-import timber.log.Timber
 import javax.inject.Inject
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), HasDependencies {
+
+    private val searchCountryDeps = object : SearchCountryDeps {
+        override fun foundCountryClicked(country: Country) {
+            val index = viewModel.mapScreenState.value.countryList.indexOfFirst {
+                it.name == country.name
+            }
+
+            if (index != -1) {
+                binding.rvCountries.scrollToPosition(index-1)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding.rvCountries.smoothScrollToPosition(index)
+                }, 200)
+            }
+
+            hideSoftInputKeyboard()
+        }
+    }
+
+    override val depsMap: DepsMap = mapOf(SearchCountryDeps::class.java to searchCountryDeps)
 
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
@@ -166,60 +186,6 @@ class MapFragment : Fragment() {
         viewModel.mapScreenState.observeWithLifecycle {
             renderState(it)
         }
-
-        binding.etSearch.setAfterTextChangedListenerWithDebounce(
-            debounceMillis = 700L,
-            coroutineScope = viewLifecycleOwner.lifecycleScope,
-            actionBeforeDebounce = {
-                if (binding.etSearch.text?.isNotBlank() == true) {
-                    viewModel.sendAction(
-                        MapScreenAction.ShowSearchLoadingState(
-                            binding.etSearch.text?.toString() ?: ""
-                        )
-                    )
-                } else {
-                    viewModel.sendAction(MapScreenAction.SetEmptySearchRequest)
-                }
-            }
-        ) {
-            viewModel.sendAction(MapScreenAction.SearchCountryByName(it))
-        }
-
-        binding.etSearch.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            when {
-                !hasFocus -> {
-                    if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
-                    hideSoftInputKeyboard()
-                }
-
-                binding.tvSearchResult.visibility == View.INVISIBLE
-                        && binding.tvSearchResult.text.isNotBlank()
-                        && binding.tvSearchResult.text != getString(R.string.no_search_result_text) -> {
-                    showSearchResultView()
-                }
-            }
-        }
-
-        binding.tvSearchResult.setOnClickListener {
-            viewModel.mapScreenState.value.searchResult?.let { searchResult ->
-                if (searchResult is SearchResult.Complete) {
-                    val index = viewModel.mapScreenState.value.countryList.indexOfFirst {
-                        it.name == searchResult.searchResult.name
-                    }
-
-                    if (index != -1) {
-                        binding.rvCountries.scrollToPosition(index-1)
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            binding.rvCountries.smoothScrollToPosition(index)
-                        }, 200)
-                    }
-
-
-                    hideSoftInputKeyboard()
-                    binding.etSearch.setText(searchResult.searchResult.name)
-                }
-            }
-        }
     }
 
     override fun onResume() {
@@ -269,13 +235,6 @@ class MapFragment : Fragment() {
                 setLocation(GeoPoint(lat, lon), zoomLevel, infoText, false)
             }
         }
-
-        if (state.searchRequest != binding.etSearch.text.toString()) {
-            binding.etSearch.setText(state.searchRequest)
-        }
-
-        updateSearchResultView(state.searchResult)
-
     }
 
     private fun initMap() {
@@ -386,35 +345,6 @@ class MapFragment : Fragment() {
         mapPermissionsCallback.launch(permissions.toTypedArray())
     }
 
-    private fun showSearchResultView() {
-        binding.tvSearchResult.visibility = View.VISIBLE
-
-        val animation = TranslateAnimation(
-            0f,
-            0f,
-            -6f - binding.tvSearchResult.height.toFloat(),
-            0f
-        )
-
-        animation.duration = 500
-        animation.fillAfter = true
-        binding.tvSearchResult.startAnimation(animation)
-    }
-
-    private fun hideSearchResultView() {
-        val animation = TranslateAnimation(
-            0f,
-            0f,
-            0f,
-            -6f - binding.tvSearchResult.height.toFloat()
-        )
-
-        animation.duration = 500
-        animation.fillAfter = true
-        binding.tvSearchResult.startAnimation(animation)
-        binding.tvSearchResult.visibility = View.INVISIBLE
-    }
-
     private fun showImagePlaceholder(
         imageView: ImageView, progressBar: ProgressBar, showProgress: Boolean
     ) {
@@ -429,58 +359,5 @@ class MapFragment : Fragment() {
             requireActivity().findViewById<View>(android.R.id.content).windowToken,
             0
         )
-    }
-
-    private fun updateSearchResultView(searchResult: SearchResult?) {
-        when (searchResult) {
-            is SearchResult.Loading -> {
-                if (binding.tvSearchResult.text == binding.etSearch.text.toString()) return
-
-                binding.tvSearchResult.text = null
-                if (binding.tvSearchResult.visibility == View.INVISIBLE) {
-                    showSearchResultView()
-
-                    try {
-                        Handler(Looper.getMainLooper()).postDelayed(
-                            { binding.pbSearch.visibility = View.VISIBLE }, 500
-                        )
-                    } catch (e: Exception) {
-                        Timber.tag(MapFragment::class.simpleName ?: "").e(e)
-                    }
-                } else {
-                    binding.pbSearch.visibility = View.VISIBLE
-                }
-            }
-
-            is SearchResult.Complete -> {
-                binding.pbSearch.visibility = View.GONE
-
-                binding.tvSearchResult.text = searchResult.searchResult.name
-                    ?: getString(R.string.no_search_result_text)
-
-                if (binding.tvSearchResult.visibility == View.INVISIBLE
-                    && binding.etSearch.text.toString() != binding.tvSearchResult.text.toString()
-                ) {
-                    showSearchResultView()
-                } else if (
-                    binding.etSearch.text.toString() == binding.tvSearchResult.text.toString()
-                ) {
-                    binding.etSearch.clearFocus()
-                    if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
-                }
-            }
-
-            is SearchResult.Error -> {
-                binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = getString(R.string.no_search_result_text)
-                if (binding.tvSearchResult.visibility == View.INVISIBLE) showSearchResultView()
-            }
-
-            null -> {
-                binding.pbSearch.visibility = View.GONE
-                binding.tvSearchResult.text = getString(R.string.no_search_result_text)
-                if (binding.tvSearchResult.visibility == View.VISIBLE) hideSearchResultView()
-            }
-        }
     }
 }

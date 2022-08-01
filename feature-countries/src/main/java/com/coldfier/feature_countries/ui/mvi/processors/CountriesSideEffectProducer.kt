@@ -12,6 +12,7 @@ internal class CountriesSideEffectProducer @Inject constructor(
 
     override fun invoke(state: CountriesState, action: CountriesAction): CountriesSideEffect? {
         return when (action) {
+
             is CountriesAction.NavigateToDetailScreen ->
                 CountriesSideEffect.NavigateToDetailScreen(action.country)
 
