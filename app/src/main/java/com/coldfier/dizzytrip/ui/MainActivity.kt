@@ -84,6 +84,8 @@ class MainActivity : AppCompatActivity(), HasDependencies {
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         val navController = findNavController(R.id.nav_host_fragment_container)
         navView.setupWithNavController(navController)
+        navView.itemIconTintList = null
+
     }
 
     override fun onDestroy() {
