@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="40dp"
-            android:paddingBottom="40dp"
+            android:paddingBottom="65dp"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
             android:orientation="vertical"
@@ -97,7 +97,7 @@
                 android:textSize="14sp"
                 android:textColor="#316BFF"
                 tools:text="Minsk, Belarus, BY"
-                app:drawableStartCompat="@drawable/ic_location_marker_filled"
+                app:drawableStartCompat="@drawable/ic_location_icon"
                 android:drawablePadding="2dp"/>
 
 
