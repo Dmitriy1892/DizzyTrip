@@ -22,4 +22,4 @@ Modules assembled as independent features, sample apps are present for each feat
 
 ## Notes
 
-This is a sample project for practice in multi-module architecture combining with Dagger 2 and MVI pattern.
+This is a sample project for practice in multi-module architecture combining with Dagger2 and MVI pattern.
