@@ -1,124 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:background="#FFFFFF"
-    tools:context=".ui.CountriesListFragment">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tv_head"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:text="@string/where_do_you_want_to_go"
-        app:layout_constraintBottom_toBottomOf="@+id/cv_user_avatar_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cv_user_avatar_container"
-        style="@style/titleText"
-        android:textSize="22sp"/>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_user_avatar_container"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="46dp"
-        android:layout_marginEnd="30dp"
-        app:cardCornerRadius="23dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/iv_user_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_user_avatar_placeholder"/>
-    </androidx.cardview.widget.CardView>
-
-    <FrameLayout
-        android:id="@+id/skeleton_placeholder"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_head" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/search_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
-        android:name="com.coldfier.feature_search_country.ui.SearchCountryFragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_head"/>
-
-    <TextView
-        android:id="@+id/tv_title"
-        style="@style/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="30dp"
-        android:text="@string/title_explore_countries"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_container" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_countries"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        tools:listitem="@layout/rv_item_country"/>
-
-    <FrameLayout
-        android:id="@+id/view_no_countries"
-        android:layout_width="0dp"
-        android:layout_height="282dp"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        tools:visibility="visible">
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="#FFFFFF"
+        tools:context=".ui.CountriesListFragment">
 
         <TextView
-            android:id="@+id/tv_no_data"
+            android:id="@+id/tv_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:text="@string/where_do_you_want_to_go"
+            app:layout_constraintBottom_toBottomOf="@+id/cv_user_avatar_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cv_user_avatar_container"
+            style="@style/titleText"
+            android:textSize="22sp"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_user_avatar_container"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="46dp"
+            android:layout_marginEnd="30dp"
+            app:cardCornerRadius="23dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_user_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_user_avatar_placeholder"/>
+        </androidx.cardview.widget.CardView>
+
+        <FrameLayout
+            android:id="@+id/skeleton_placeholder"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_head" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/search_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:name="com.coldfier.feature_search_country.ui.SearchCountryFragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_head"/>
+
+        <TextView
+            android:id="@+id/tv_title"
             style="@style/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/data_not_loaded_text" />
-    </FrameLayout>
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="30dp"
+            android:text="@string/title_explore_countries"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_container" />
 
-    <ProgressBar
-        android:id="@+id/pb_loading"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:indeterminate="true"
-        android:indeterminateTint="#19696E"
-        android:indeterminateTintMode="src_atop"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_countries"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="65dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:listitem="@layout/rv_item_country"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <FrameLayout
+            android:id="@+id/view_no_countries"
+            android:layout_width="0dp"
+            android:layout_height="282dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="65dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tv_no_data"
+                style="@style/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/data_not_loaded_text" />
+        </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/pb_loading"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#19696E"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -2,30 +2,9 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_main"
-    app:startDestination="@id/countriesListFragment">
+    app:startDestination="@+id/nav_countries">
 
-    <fragment
-        android:id="@+id/countriesListFragment"
-        android:name="com.coldfier.feature_countries.ui.CountriesListFragment"
-        android:label="CountriesListFragment" >
-        <action
-            android:id="@+id/action_countriesListFragment_to_countryDetailFragment"
-            app:destination="@id/countryDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.coldfier.feature_map.ui.MapFragment"
-        android:label="MapFragment" />
-    <fragment
-        android:id="@+id/bookmarksFragment"
-        android:name="com.coldfier.feature_bookmarks.ui.BookmarksFragment"
-        android:label="BookmarksFragment" >
-        <action
-            android:id="@+id/action_bookmarksFragment_to_countryDetailFragment"
-            app:destination="@id/countryDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/countryDetailFragment"
-        android:name="com.coldfier.feature_country_detail.ui.CountryDetailFragment"
-        android:label="CountryDetailFragment" />
+    <include app:graph="@navigation/nav_countries" />
+    <include app:graph="@navigation/nav_map" />
+    <include app:graph="@navigation/nav_bookmarks" />
 </navigation>
