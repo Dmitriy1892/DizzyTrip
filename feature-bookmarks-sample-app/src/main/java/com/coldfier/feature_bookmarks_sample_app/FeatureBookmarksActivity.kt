@@ -2,14 +2,12 @@ package com.coldfier.feature_bookmarks_sample_app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_utils.di.DepsMap
 import com.coldfier.core_utils.di.HasDependencies
 import com.coldfier.feature_bookmarks.BookmarksDeps
 import com.coldfier.feature_country_detail.CountryDetailDeps
-import com.coldfier.feature_country_detail.ui.CountryDetailFragment
 
 class FeatureBookmarksActivity : AppCompatActivity(), HasDependencies {
 

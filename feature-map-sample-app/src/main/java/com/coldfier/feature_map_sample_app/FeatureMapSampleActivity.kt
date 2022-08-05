@@ -2,7 +2,6 @@ package com.coldfier.feature_map_sample_app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.fragment.app.commit
 import com.coldfier.core_utils.di.DepsMap
 import com.coldfier.core_utils.di.HasDependencies

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_countries"
+    app:startDestination="@id/countriesListFragment">
+
+    <fragment
+        android:id="@+id/countriesListFragment"
+        android:name="com.coldfier.feature_countries.ui.CountriesListFragment"
+        android:label="CountriesListFragment" >
+        <action
+            android:id="@+id/action_countriesListFragment_to_countryDetailFragment"
+            app:destination="@id/countryDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/countryDetailFragment"
+        android:name="com.coldfier.feature_country_detail.ui.CountryDetailFragment"
+        android:label="CountryDetailFragment" />
+</navigation>

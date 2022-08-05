@@ -3,7 +3,8 @@ package com.coldfier.dizzytrip.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_utils.di.DepsMap
@@ -17,7 +18,6 @@ import com.coldfier.feature_bookmarks.BookmarksDeps
 import com.coldfier.feature_countries.CountriesDeps
 import com.coldfier.feature_country_detail.CountryDetailDeps
 import com.coldfier.feature_map.MapDeps
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), HasDependencies {
@@ -29,8 +29,7 @@ class MainActivity : AppCompatActivity(), HasDependencies {
     private val countriesDeps = object : CountriesDeps {
         override fun navigateToCountryDetailFragment(country: Country) {
             countryDetailDeps.country = country
-            findNavController(R.id.nav_host_fragment_container)
-                .navigate(R.id.action_countriesListFragment_to_countryDetailFragment)
+            navController.navigate(R.id.action_countriesListFragment_to_countryDetailFragment)
         }
     }
 
@@ -39,8 +38,7 @@ class MainActivity : AppCompatActivity(), HasDependencies {
     private val bookmarksDeps = object : BookmarksDeps {
         override fun navigateToDetailScreen(country: Country) {
             countryDetailDeps.country = country
-            findNavController(R.id.nav_host_fragment_container)
-                .navigate(R.id.action_bookmarksFragment_to_countryDetailFragment)
+            navController.navigate(R.id.action_bookmarksFragment_to_countryDetailFragment2)
         }
     }
 
@@ -62,6 +60,12 @@ class MainActivity : AppCompatActivity(), HasDependencies {
     private val binding: ActivityMainBinding
         get() = _binding!!
 
+    private val navController: NavController by lazy {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_container) as NavHostFragment
+        navHostFragment.navController
+    }
+
     private val activityComponent: MainActivitySubcomponent by lazy {
         (applicationContext as DizzyTripApplication).appComponent
             .mainActivityComponent()
@@ -76,16 +80,9 @@ class MainActivity : AppCompatActivity(), HasDependencies {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        val navController = findNavController(R.id.nav_host_fragment_container)
-        navView.setupWithNavController(navController)
-        navView.itemIconTintList = null
-
+        val bottomNavView = binding.bottomNavigation
+        bottomNavView.setupWithNavController(navController)
+        bottomNavView.itemIconTintList = null
     }
 
     override fun onDestroy() {

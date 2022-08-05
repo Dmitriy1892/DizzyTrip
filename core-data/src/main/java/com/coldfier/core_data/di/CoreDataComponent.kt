@@ -1,6 +1,5 @@
 package com.coldfier.core_data.di
 
-import android.content.Context
 import com.coldfier.core_data.CoreDataApi
 import com.coldfier.core_data.CoreDataDeps
 import com.coldfier.core_data.di.modules.DatabaseModule

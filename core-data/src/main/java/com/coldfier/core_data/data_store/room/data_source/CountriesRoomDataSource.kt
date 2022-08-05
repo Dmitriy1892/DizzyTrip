@@ -4,37 +4,11 @@ import com.coldfier.core_data.data_store.room.dao.CountriesDao
 import com.coldfier.core_data.data_store.room.models.RoomCountryShort
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 internal class CountriesRoomDataSource @Inject constructor(
     private val countriesDao: CountriesDao
 ) {
-    val countriesFlow = countriesDao.getCountries()
-        .zip(countriesDao.getCountriesWithAdvicesMap()) { countries, roomAdvices ->
-            RoomSlots(listCountries = countries, mapAdvices = roomAdvices)
-        }
-        .zip(countriesDao.getCountriesWithWeathers()) { slots, roomWeathers ->
-            slots.mapWeathers = roomWeathers
-            slots
-        }
-        .zip(countriesDao.getCountriesWithVaccinations()) { slots, roomVaccinations ->
-            slots.mapVaccinations = roomVaccinations
-            slots
-        }
-        .zip(countriesDao.getCountriesWithLanguages()) { slots, roomLanguages ->
-            slots.mapLanguages = roomLanguages
-            slots
-        }
-        .zip(countriesDao.getCountriesWithPlugTypes()) { slots, roomPlugTypes ->
-            slots.mapPlugTypes = roomPlugTypes
-            slots
-        }
-        .zip(countriesDao.getCountriesWithNeighborCountries()) { slots, roomNeighborCountries ->
-            slots.mapNeighborCountries = roomNeighborCountries
-            slots.convertToListRoomCountryFullModel()
-        }
-        .flowOn(Dispatchers.IO)
 
     val countryShortsFlow = countriesDao.getCountryShorts()
         .flowOn(Dispatchers.IO)
@@ -78,7 +52,5 @@ internal class CountriesRoomDataSource @Inject constructor(
     suspend fun saveRoomCountryShorts(roomCountryShorts: List<RoomCountryShort>) {
         countriesDao.insertCountryShorts(*roomCountryShorts.toTypedArray())
     }
-
-
 }
 

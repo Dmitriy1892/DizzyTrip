@@ -38,7 +38,6 @@ fun <T> Flow<T>.observeWithLifecycle(block: suspend (T) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 fun EditText.setAfterTextChangedListenerWithDebounce(
     debounceMillis: Long = 300L,
     coroutineScope: CoroutineScope,

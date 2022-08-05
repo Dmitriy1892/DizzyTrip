@@ -7,6 +7,7 @@ import com.coldfier.core_mvi.Middleware
 import com.coldfier.feature_country_detail.ui.mvi.CountryState
 import com.coldfier.feature_country_detail.ui.mvi.CountryUiEvent
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,11 +22,23 @@ internal class CountryMiddleware @Inject constructor(
                 middlewareCoroutineScope.launch {
                     changeIsBookmark(
                         countryName = state.country.name ?: "",
-                        isBookmark = state.country.isAddedToBookmark != true
+                        isBookmark = event.isNeedToAddBookmark
                     )
                 }
 
                 null
+            }
+
+            is CountryUiEvent.CheckCountryIsBookmark -> {
+                flow {
+                    val isBookmark = try {
+                        countryIsBookmark(state.country.name ?: "")
+                    } catch (e: Exception) {
+                        false
+                    }
+
+                    emit(CountryUiEvent.BookmarkStatus(isBookmark))
+                }
             }
 
             else -> null
@@ -38,5 +51,9 @@ internal class CountryMiddleware @Inject constructor(
 
     private suspend fun changeIsBookmark(countryName: String, isBookmark: Boolean) {
         countriesRepository.updateIsBookmark(countryName, isBookmark)
+    }
+
+    private suspend fun countryIsBookmark(countryName: String): Boolean {
+        return countriesRepository.countryIsBookmark(countryName)
     }
 }

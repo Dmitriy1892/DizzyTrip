@@ -4,7 +4,6 @@ import android.content.Context
 import com.coldfier.core_data.CoreDataApi
 import com.coldfier.core_data.CoreDataDeps
 import com.coldfier.core_data.repository.repositories.CountriesRepository
-import com.coldfier.core_data.repository.repositories.PixabayImagesRepository
 import com.coldfier.feature_search_country.di.SearchCountryScope
 import com.coldfier.feature_search_country.ui.mvi.SearchState
 import dagger.Module
