@@ -2,7 +2,6 @@ package com.coldfier.core_data.data_store.room.dao
 
 import androidx.room.*
 import com.coldfier.core_data.data_store.room.models.*
-import com.coldfier.core_data.repository.models.CountryShort
 import com.coldfier.core_data.repository.models.PlugType
 import kotlinx.coroutines.flow.Flow
 
@@ -77,37 +76,4 @@ internal interface CountriesDao {
 
     @Query("SELECT isBookmark FROM roomcountryshort WHERE name = :countryName")
     suspend fun countryIsBookmark(countryName: String): Boolean
-
-//    @Transaction
-//    @Query("SELECT * FROM roomcountry WHERE name = :countryName")
-//    suspend fun getCountryWithAdvices(countryName: String): Flow<List<CountryWithAdvices>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomcountry WHERE name = :countryName")
-//    suspend fun getCountryWithWeathers(countryName: String): Flow<List<CountryWithWeathers>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomcountry WHERE name = :countryName")
-//    suspend fun getCountryWithVaccinations(countryName: String): Flow<List<CountryWithVaccinations>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomcountry WHERE name = :countryName")
-//    suspend fun getCountryWithLanguages(countryName: String): Flow<List<CountryWithLanguages>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomcountry WHERE name = :countryName")
-//    suspend fun getCountryWithPlugTypes(countryName: String): Flow<List<CountryWithPlugTypes>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomplugtype WHERE plugType = :plugType")
-//    suspend fun getPlugTypesWithCountry(plugType: PlugType): Flow<List<CountryWithLanguages>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomcountry WHERE name = :countryName")
-//    suspend fun getCountryWithNeighborCountries(countryName: String): Flow<List<CountryWithNeighborCountries>>
-//
-//    @Transaction
-//    @Query("SELECT * FROM roomneighborcountry WHERE countryId = :neighborCountryId")
-//    suspend fun getNeighborCountryWithCountries(neighborCountryId: Int): Flow<List<NeighborCountryWithCountries>>
-
 }

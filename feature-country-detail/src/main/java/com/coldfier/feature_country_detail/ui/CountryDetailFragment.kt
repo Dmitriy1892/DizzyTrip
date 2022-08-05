@@ -95,12 +95,23 @@ class CountryDetailFragment : Fragment() {
         binding.buttonBack.setOnClickListener { backPressedDispatcher.onBackPressed() }
 
         binding.buttonBookmark.setOnClickListener {
-            viewModel.sendUiEvent(CountryUiEvent.ChangeIsBookmark)
+            viewModel.sendUiEvent(
+                CountryUiEvent.ChangeIsBookmark(
+                    isNeedToAddBookmark = viewModel.countryStateFlow.value
+                        .country.isAddedToBookmark != true
+                )
+            )
         }
 
         viewModel.countryStateFlow.observeWithLifecycle {
             renderState(it)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.sendUiEvent(CountryUiEvent.CheckCountryIsBookmark)
     }
 
     private fun renderState(screenState: CountryState) {
@@ -159,9 +170,9 @@ class CountryDetailFragment : Fragment() {
 
             tvWater.text = waterInfo
 
-            tvCaAdvice.text = country.advices?.getOrDefault(AdviceType.CA, Advice())?.advise ?: ""
+            tvCaAdvice.text = country.advices?.getOrElse(AdviceType.CA) { Advice() }?.advise ?: ""
 
-            tvUaAdvice.text = country.advices?.getOrDefault(AdviceType.UA, Advice())?.advise ?: ""
+            tvUaAdvice.text = country.advices?.getOrElse(AdviceType.UA) { Advice() }?.advise ?: ""
 
             tvVoltage.text =
                 String.format(getString(R.string.voltage), country.voltage?.toString() ?: "-")

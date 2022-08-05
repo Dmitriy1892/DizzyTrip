@@ -1,8 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.DizzyTrip" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">#A7A7A7</item>
         <item name="colorPrimaryVariant">#E6E6E6</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->

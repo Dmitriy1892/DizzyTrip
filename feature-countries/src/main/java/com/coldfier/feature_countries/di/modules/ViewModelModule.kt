@@ -14,5 +14,5 @@ internal interface ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(CountriesListViewModel::class)
-    abstract fun bindCountriesListViewModel(countriesListViewModel: CountriesListViewModel): ViewModel
+    fun bindCountriesListViewModel(countriesListViewModel: CountriesListViewModel): ViewModel
 }

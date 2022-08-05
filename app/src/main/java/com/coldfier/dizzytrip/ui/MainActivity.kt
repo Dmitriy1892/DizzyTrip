@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_utils.di.DepsMap
@@ -20,7 +18,6 @@ import com.coldfier.feature_bookmarks.BookmarksDeps
 import com.coldfier.feature_countries.CountriesDeps
 import com.coldfier.feature_country_detail.CountryDetailDeps
 import com.coldfier.feature_map.MapDeps
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), HasDependencies {

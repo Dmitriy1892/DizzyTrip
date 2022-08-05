@@ -1,7 +1,6 @@
 package com.coldfier.feature_countries.ui.mvi
 
 import android.graphics.drawable.Drawable
-import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_data.repository.models.CountryShort
 
 internal data class CountriesState(

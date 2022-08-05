@@ -3,7 +3,6 @@ package com.coldfier.feature_search_country.ui.mvi.processors
 import com.coldfier.core_mvi.Reducer
 import com.coldfier.feature_search_country.ui.mvi.SearchAction
 import com.coldfier.feature_search_country.ui.mvi.SearchResult
-import com.coldfier.feature_search_country.ui.mvi.SearchSideEffect
 import com.coldfier.feature_search_country.ui.mvi.SearchState
 import javax.inject.Inject
 

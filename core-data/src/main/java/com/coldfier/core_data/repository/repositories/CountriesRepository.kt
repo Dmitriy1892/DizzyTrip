@@ -16,4 +16,6 @@ interface CountriesRepository {
     suspend fun searchCountry(countryName: String): Country
 
     suspend fun updateIsBookmark(countryName: String, isBookmark: Boolean)
+
+    suspend fun countryIsBookmark(countryName: String): Boolean
 }

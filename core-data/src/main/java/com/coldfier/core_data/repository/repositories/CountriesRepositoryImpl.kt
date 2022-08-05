@@ -10,7 +10,6 @@ import com.coldfier.core_data.repository.convertToRoomCountryShort
 import com.coldfier.core_data.repository.models.Country
 import com.coldfier.core_data.repository.models.CountryShort
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -69,5 +68,9 @@ internal class CountriesRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             countriesRoomDataSource.updateIsBookmark(countryName, isBookmark)
         }
+    }
+
+    override suspend fun countryIsBookmark(countryName: String): Boolean {
+        return countriesRoomDataSource.countryIsBookmark(countryName)
     }
 }

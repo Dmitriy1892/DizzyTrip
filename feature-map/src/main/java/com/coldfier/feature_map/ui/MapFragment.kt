@@ -1,5 +1,6 @@
 package com.coldfier.feature_map.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -192,6 +193,7 @@ class MapFragment : Fragment(), HasDependencies {
         viewModel.mapSideEffectFlow.observeWithLifecycle(::renderSideEffect)
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onResume() {
         super.onResume()
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -305,6 +307,7 @@ class MapFragment : Fragment(), HasDependencies {
         binding.mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
     }
 
+    @SuppressLint("MissingPermission")
     private fun getMyLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         fusedLocationClient.lastLocation.addOnSuccessListener { location : Location? ->
